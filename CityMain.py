@@ -19,11 +19,13 @@ def strip_from_sheet(sheet, start, size, columns, rows):
     return frames
 
 def create_grid (size):
-    squares = []
-    for n in range (size):
-        location = "   0"
-        squares.append(location)
-    return squares
+    # squares = []
+    # for n in range (size):
+    #     location = "   0"
+    #     squares.append(location)
+    # return squares
+
+    return ["   0" for _ in range(size)]
  
 def dec2hex(n):
     return "%X" % n
