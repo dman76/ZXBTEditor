@@ -19,11 +19,7 @@ def strip_from_sheet(sheet, start, size, columns, rows):
     return frames
 
 def create_grid (size):
-    squares = []
-    for n in range (size):
-        location = "   0"
-        squares.append(location)
-    return squares
+    return ["   0" for _ in range(size)]
  
 def dec2hex(n):
     return "%X" % n
@@ -59,9 +55,7 @@ def getCoords(x):
     #return N, E
 
 def pack_2():
-    #CityOut.reverse()
     cCount = 1
-    # spacetoFill needs to equal 900-x
     spaceToFill = 210     #(900 - 690)
     spaceLeft = 690
     dfile = open('diagnost.txt', 'w')
@@ -76,8 +70,6 @@ def pack_2():
             spaceLeft = spaceLeft - 1
         else:
             xcount = xcount + 1
-            #print ("Space left = ", spaceLeft)
-            #print ("Space to fill with packing: ", spaceToFill)
             if noPacking == 0:
                 if CityOut[x] == last:
                     cCount = cCount + 1
@@ -296,7 +288,7 @@ def pack_2():
                                     last = CityOut[x]
             else:  # NoPacking = 1, no more packing...
                     CityPacked.append(CityOut[x])
-    #CityOut.reverse()
+
 
 def find_Guild():
     gridCount = 0
@@ -306,7 +298,7 @@ def find_Guild():
     for z in range(900):
         gridCount = gridCount + 1
         if CityOut[z] == "   9":
-            if guildCount > 1:
+            if guildCount == 1:
                 print("Warning: > 1 Guild, 1st will be start location")
             else:
                 guildCount = guildCount + 1
@@ -354,118 +346,7 @@ def find_Guild():
                         else:
                             guild_east = '0'+str(guild_east)
                     gfile.write(str(guild_east)+'h')
-        
-
-def pack_grid():
-    conseqCount = 1
-    for z in range(900):
-        if z == 0: # on first iteration
-            last = CityOut[z]
-        else:
-            if CityOut[z] == last:
-                conseqCount = conseqCount + 1
-                if z == 899: # write out on final iteration if = to previous
-                    if conseqCount > 3:
-                        CityPacked.append("0FCh")
-                        CityPacked.append(str(' '+dec2hex(conseqCount))+'h')
-                        CityPacked.append(last)
-                    else:
-                        if conseqCount == 3:
-                            CityPacked.append(last)
-                            CityPacked.append(last)
-                            CityPacked.append(last)
-                        if conseqCount == 2:
-                            CityPacked.append(last)
-                            CityPacked.append(last)
-                        if conseqCount == 1:
-                            CityPacked.append(last)
-            else:   # When changes
-                if conseqCount > 3: # can pack
-                    if conseqCount > 30:
-                        remainder = conseqCount - 30
-                        CityPacked.append("0FCh")
-                        if conseqCount > 9:
-                                if conseqCount == 10:
-                                    CityPacked.append(' 0Ah')
-                                if conseqCount == 11:
-                                    CityPacked.append(' 0Bh')
-                                if conseqCount == 12:
-                                    CityPacked.append(' 0Ch')
-                                if conseqCount == 13:
-                                    CityPacked.append(' 0Dh')
-                                if conseqCount == 14:
-                                    CityPacked.append(' 0Eh')
-                                if conseqCount == 15:
-                                    CityPacked.append(' 0Fh')
-                                if conseqCount > 15:
-                                    CityPacked.append(str(' '+dec2hex(30))+'h')
-                        else:
-                            CityPacked.append('   '+str(conseqCount))
-                        CityPacked.append(last)
-                        if remainder > 3:
-                            CityPacked.append("0FCh")
-                            if remainder > 9:
-                                if remainder == 10:
-                                    CityPacked.append(' 0Ah')
-                                if remainder == 11:
-                                    CityPacked.append(' 0Bh')
-                                if remainder == 12:
-                                    CityPacked.append(' 0Ch')
-                                if remainder == 13:
-                                    CityPacked.append(' 0Dh')
-                                if remainder == 14:
-                                    CityPacked.append(' 0Eh')
-                                if remainder == 15:
-                                    CityPacked.append(' 0Fh')
-                                if remainder > 15:
-                                    CityPacked.append(str(' '+dec2hex(remainder))+'h')
-                                    #CityPacked.append('  '+str(conseqCount))
-                        else:
-                            if remainder == 3:
-                                CityPacked.append(last)
-                                CityPacked.append(last)
-                                CityPacked.append(last)
-                            if remainder == 2:
-                                CityPacked.append(last)
-                                CityPacked.append(last)
-                            if remainder == 1:
-                                CityPacked.append(last)
-                        conseqCount = 1
-                        last = CityOut[z]
-                    else:    
-                        CityPacked.append("0FCh")
-                        if conseqCount > 9:
-                                if conseqCount == 10:
-                                    CityPacked.append(' 0Ah')
-                                if conseqCount == 11:
-                                    CityPacked.append(' 0Bh')
-                                if conseqCount == 12:
-                                    CityPacked.append(' 0Ch')
-                                if conseqCount == 13:
-                                    CityPacked.append(' 0Dh')
-                                if conseqCount == 14:
-                                    CityPacked.append(' 0Eh')
-                                if conseqCount == 15:
-                                    CityPacked.append(' 0Fh')
-                                if conseqCount > 15:                         
-                                    CityPacked.append(str(' '+dec2hex(conseqCount))+'h')
-                        else:
-                            CityPacked.append(last)
-                        conseqCount = 1
-                        last = CityOut[z]
-                else:
-                    if conseqCount == 3:
-                        CityPacked.append(last)
-                        CityPacked.append(last)
-                        CityPacked.append(last)
-                    if conseqCount == 2:
-                        CityPacked.append(last)
-                        CityPacked.append(last)
-                    if conseqCount == 1:
-                        CityPacked.append(last)
-                    conseqCount = 1
-                    last = CityOut[z]
-                    
+                           
                 
 def write_Out():
     first3 = 1
@@ -504,15 +385,11 @@ def write_Out():
 pg.init()
    
 screen = pg.display.set_mode((1200,960))
-#screen = pg.display.set_mode((0,0), pg.FULLSCREEN)
-#screen_rect = screen.get_rect()
 pg.display.set_caption("City Editor")
 done = False
 
 CityDisplay = create_grid(900)
 CityOut = create_grid(900)
-#print ('CityOut 0:' + str(CityOut[0]))
-#CityPacked = []
 
 sheet = pg.image.load('CitySpriteSheet32.png')
 city = strip_from_sheet(sheet, (0,0), (32,32), 3, 6)
@@ -546,8 +423,6 @@ display_surface.fill(BLACK)
 
 font = pg.font.Font('freesansbold.ttf', 16)
 text = font.render('     Blank     ', True, RED, BLACK)
-#textX = font.render(str(0), True, RED, BLACK)
-#textY = font.render(str(0), True, RED, BLACK)
 textX = font.render('E: '+str(east), True, RED, BLACK)
 textY = font.render('N: '+str(north), True, RED, BLACK)
 textOut = font.render('000', True, RED, BLACK)
@@ -591,15 +466,10 @@ while not done:
             if event.type == pg.QUIT: # If user clicked close
                 done = True # Flag that we are done so we exit this loop
 
-            #screen.blit(city[0], screen_rect.center)
             screen.blit(cityBig[selectedBlock], (selectX,selectY))
             display_surface.blit(text, textRect)
             screen.blit(text, textRect)
             screen.blit(city[selectedBlock], (XPos,YPos))
-            #display_surface.blit(textOut, outValRect)
-            #getCoords(Pointer)
-            #textX = font.render(str(east), True, RED, BLACK)
-            #textY = font.render(str(north), True, RED, BLACK)
             display_surface.blit(textX, coordxRect)
             display_surface.blit(textY, coordyRect)
             screen.blit(textX, (1000, 250))
@@ -607,9 +477,6 @@ while not done:
             pg.display.update()
  
             if event.type == pg.KEYDOWN:
-                #getCoords(Pointer)
-                #print (north)
-                #print (east)
                 if event.key == pg.K_LEFT:
                     if selectedBlock > 0:
                         selectedBlock = selectedBlock - 1
@@ -666,10 +533,8 @@ while not done:
                     CityDisplay[Pointer] = selectedBlock
                     CityOut[Pointer] = outValue
                 if event.key == pg.K_x:
-                    #CityOut = create_grid(900)
                     print ('CityOut 0:' + str(CityOut[0]))
                     CityPacked = []
-                    #pack_grid()
                     # end 64152
                     # start 63466
                     # available memory space = 686
@@ -714,68 +579,50 @@ while not done:
                 if event.key == pg.K_9:
                     selectedBlock = 9
 
-                #textX = str(XPos)
-                #textY = str(YPos)
-                #coordxRect = font.render((XPos), True, RED, BLACK)
-                #coordyRect = font.render((YPos), True, RED, BLACK)
 
 
             if selectedBlock == 0:
                 text = font.render('      Blank     ', True, RED, BLACK)
                 outValue = "   0"
-                outValRect = font.render('out: 000', True, RED, BLACK)
             if selectedBlock == 1:
                 text = font.render(' Empty Building ', True, RED, BLACK)
                 outValue = "   1"
-                outValRect = font.render('out: 001', True, RED, BLACK)
             if selectedBlock == 2:
                 text = font.render('   The Guild    ', True, RED, BLACK)
                 outValue = "   9"
-                outValRect = font.render('out: 009', True, RED, BLACK)
             if selectedBlock == 3:
                 text = font.render('   The Shoppe   ', True, RED, BLACK)
                 outValue = " 19h"
-                outValRect = font.render('out: 025', True, RED, BLACK)
             if selectedBlock == 4:
                 text = font.render('  Review Board  ', True, RED, BLACK)
                 outValue = " 29h"
-                outValRect = font.render('out: 041', True, RED, BLACK)
             if selectedBlock == 5:
                 text = font.render('       Inn      ', True, RED, BLACK)
                 outValue = " 11h"
-                outValRect = font.render('out: 017', True, RED, BLACK)
             if selectedBlock == 6:
                 text = font.render('    City Gates  ', True, RED, BLACK)
                 outValue = "0A8h"
-                outValRect = font.render('out: 168', True, RED, BLACK)
             if selectedBlock == 7:
                 text = font.render('      Temple    ', True, RED, BLACK)
                 outValue = " 21h"
-                outValRect = font.render('out: 033', True, RED, BLACK)
             if selectedBlock == 8:
                 text = font.render('     Roscoe''s  ', True, RED, BLACK)
                 outValue = " 89h"
-                outValRect = font.render('out: 137', True, RED, BLACK)
             if selectedBlock == 9:
                 text = font.render(' Guardian Statue', True, RED, BLACK)
                 outValue = " 60h"
-                outValRect = font.render('out: 096', True, RED, BLACK)
             if selectedBlock == 10:
                 text = font.render('    Iron Gate   ', True, RED, BLACK)
                 outValue = " 68h"
-                outValRect = font.render('out: 104', True, RED, BLACK)
             if selectedBlock == 11:
                 text = font.render(' Mad God Temple ', True, RED, BLACK)
                 outValue = " 71h"
-                outValRect = font.render('out: 113', True, RED, BLACK)
             if selectedBlock == 12:
                 text = font.render('      Castle    ', True, RED, BLACK)
                 outValue = " 99h"
-                outValRect = font.render('out: 153', True, RED, BLACK)
             if selectedBlock == 13:
                 text = font.render('Kylearans Tower ', True, RED, BLACK)
                 outValue = " 91h"
-                outValRect = font.render('out: 145', True, RED, BLACK)
             if selectedBlock == 14:
                 text = font.render('  Mangars Tower ', True, RED, BLACK)
                 outValue = "0A1h"
@@ -783,15 +630,12 @@ while not done:
             if selectedBlock == 15:
                 text = font.render(' Sewer Entrance ', True, RED, BLACK)
                 outValue = " 78h"
-                outValRect = font.render('out: 120', True, RED, BLACK)
             if selectedBlock == 16:
                 text = font.render(' Teleport From  ', True, RED, BLACK)
                 outValue = "   0"
-                outValRect = font.render('out: 0', True, RED, BLACK)
             if selectedBlock == 17:
                 text = font.render(' Teleport To:   ', True, RED, BLACK)
                 outValue = "   0"
-                outValRect = font.render('out: 0', True, RED, BLACK)
 
 
         # Go ahead and update the screen with what we've drawn.
