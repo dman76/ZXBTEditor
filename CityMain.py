@@ -5,6 +5,13 @@ import pygame as pg
 from pygame.locals import *
 import numpy as np
 
+#output file inits
+
+dfile = open('diagnost.txt', 'w')
+dfile.write('\n')
+dfile.write('Diagnostic:')
+dfile.close()
+
 
 def main():
     """ Main Program """
@@ -54,13 +61,20 @@ def getCoords(x):
         print (east)
     #return N, E
 
+def diag(xcount, spaceToFill, spaceLeft, addCount, last):
+    dfile = open('diagnost.txt', 'a')
+    dfile.write('\n')
+    dfile.write("grid count: "+str(xcount))
+    dfile.write(" SpaceToFill: "+str(spaceToFill))
+    dfile.write(" SpaceLeft: "+str(spaceLeft))
+    dfile.write(" AddCount: "+str(addCount))
+    dfile.write(" Last: "+str(last))
+    dfile.close()
+
 def pack_2():
     cCount = 1
     spaceToFill = 210     #(900 - 690)
     spaceLeft = 690
-    dfile = open('diagnost.txt', 'w')
-    dfile.write('\n')
-    dfile.write('Diagnostic:')
     xcount = 0
     addCount = 0
     noPacking = 0
@@ -84,13 +98,8 @@ def pack_2():
                             CityPacked.append(last)
                             packLeft = (packLeft - 30)
                             spaceToFill = spaceToFill - 30
-                            spaceLeft = spaceLeft - 3                           
-                            dfile.write('\n')
-                            dfile.write("grid count: "+str(xcount))
-                            dfile.write(" SpaceToFill: "+str(spaceToFill))
-                            dfile.write(" SpaceLeft: "+str(spaceLeft))
-                            dfile.write(" AddCount: "+str(addCount))
-                            dfile.write(" Last: "+str(last))
+                            spaceLeft = spaceLeft - 3
+                            diag(xcount, spaceToFill, spaceLeft, addCount, last)
                             print (">30: Space Left = ", spaceLeft)
                             print ("Space to fill with packing: ", spaceToFill)
                         if packLeft > 15:
@@ -99,12 +108,7 @@ def pack_2():
                             CityPacked.append(last)
                             spaceToFill = spaceToFill - cCount 
                             spaceLeft = spaceLeft - 3
-                            dfile.write('\n')
-                            dfile.write("grid count: "+str(xcount))
-                            dfile.write(" SpaceToFill: "+str(spaceToFill))
-                            dfile.write(" SpaceLeft: "+str(spaceLeft))
-                            dfile.write(" AddCount: "+str(addCount))
-                            dfile.write(" Last: "+str(last))
+                            diag(xcount, spaceToFill, spaceLeft, addCount, last)
                             last = CityOut[x]
                             print (">15: Space Left = ", spaceLeft)
                             print ("Space to fill with packing: ", spaceToFill)
@@ -115,12 +119,7 @@ def pack_2():
                                 CityPacked.append(last)
                                 spaceToFill = spaceToFill - cCount 
                                 spaceLeft = spaceLeft - 3
-                                dfile.write('\n')
-                                dfile.write("grid count: "+str(xcount))
-                                dfile.write(" SpaceToFill: "+str(spaceToFill))
-                                dfile.write(" SpaceLeft: "+str(spaceLeft))
-                                dfile.write(" AddCount: "+str(addCount))
-                                dfile.write(" Last: "+str(last))
+                                diag(xcount, spaceToFill, spaceLeft, addCount, last)
                                 last = CityOut[x]
                                 print (">9: Space Left = ", spaceLeft)
                                 print ("Space to fill with packing: ", spaceToFill)
@@ -131,12 +130,7 @@ def pack_2():
                                     CityPacked.append(last)
                                     spaceToFill = spaceToFill - cCount 
                                     spaceLeft = spaceLeft - 3
-                                    dfile.write('\n')
-                                    dfile.write("grid count: "+str(xcount))
-                                    dfile.write(" SpaceToFill: "+str(spaceToFill))
-                                    dfile.write(" SpaceLeft: "+str(spaceLeft))
-                                    dfile.write(" AddCount: "+str(addCount))
-                                    dfile.write(" Last: "+str(last))
+                                    diag(xcount, spaceToFill, spaceLeft, addCount, last)
                                     last = CityOut[x]
                                     print (">3: Space Left = ", spaceLeft)
                                     print ("Space to fill with packing: ", spaceToFill)
@@ -146,47 +140,36 @@ def pack_2():
                                         CityPacked.append(last)
                                         CityPacked.append(last)
                                         spaceLeft = spaceLeft - 3
-                                        dfile.write('\n')
-                                        dfile.write("grid count: "+str(xcount))
-                                        dfile.write(" SpaceToFill: "+str(spaceToFill))
-                                        dfile.write(" SpaceLeft: "+str(spaceLeft))
-                                        dfile.write(" AddCount: "+str(addCount))
-                                        dfile.write(" Last: "+str(last))
+                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
                                         last = CityOut[x]
                                     if packLeft == 2:
                                         CityPacked.append(last)
                                         CityPacked.append(last)
                                         spaceLeft = spaceLeft - 2
-                                        dfile.write('\n')
-                                        dfile.write("grid count: "+str(xcount))
-                                        dfile.write(" SpaceToFill: "+str(spaceToFill))
-                                        dfile.write(" SpaceLeft: "+str(spaceLeft))
-                                        dfile.write(" AddCount: "+str(addCount))
-                                        dfile.write(" Last: "+str(last))
+                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
                                         last = CityOut[x]
                                     if packLeft == 1:
                                         CityPacked.append(last)
                                         spaceLeft = spaceLeft - 1
-                                        dfile.write('\n')
-                                        dfile.write("grid count: "+str(xcount))
-                                        dfile.write(" SpaceToFill: "+str(spaceToFill))
-                                        dfile.write(" SpaceLeft: "+str(spaceLeft))
-                                        dfile.write(" AddCount: "+str(addCount))
-                                        dfile.write(" Last: "+str(last))
+                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
                                         last = CityOut[x]
                         #Write remainder (if any, unpacked)
                         for r in range (1, (cCount+1)):
                             CityPacked.append(last)
                             noPacking = 1
+                        dfile = open('diagnost.txt', 'a')
                         dfile.write('\n')
                         dfile.write('remainder: '+str(cCount))
                         dfile.write('packing off')
+                        dfile.close()
                         
                     else:       # process normally (CCount less than spaceToFill)
                         if cCount == (212 - addCount):      # if remaining packed space filled exactly, set noPacking for next time
                             noPacking = 1
+                            dfile = open('diagnost.txt', 'a')
                             dfile.write('\n')
                             dfile.write("---packed exactly---")
+                            dfile.close()
                         if cCount > 30:                     # strip 30 off and continue
                             CityPacked.append("0FCh")
                             CityPacked.append(" 1Eh")
@@ -195,12 +178,7 @@ def pack_2():
                             spaceToFill = spaceToFill - 30
                             spaceLeft = spaceLeft - 3
                             addCount = addCount + 27
-                            dfile.write('\n')
-                            dfile.write("grid count: "+str(xcount))
-                            dfile.write(" SpaceToFill: "+str(spaceToFill))
-                            dfile.write(" SpaceLeft: "+str(spaceLeft))
-                            dfile.write(" AddCount: "+str(addCount))
-                            dfile.write(" Last: "+str(last))
+                            diag(xcount, spaceToFill, spaceLeft, addCount, last)
                             print ("*NP >30: Space Left = ", spaceLeft)
                             print ("Space to fill with packing: ", spaceToFill)
                         if cCount > 15:
@@ -210,12 +188,7 @@ def pack_2():
                             spaceToFill = spaceToFill - cCount 
                             spaceLeft = spaceLeft - 3
                             addCount = (addCount + cCount) - 3
-                            dfile.write('\n')
-                            dfile.write("grid count: "+str(xcount))
-                            dfile.write(" SpaceToFill: "+str(spaceToFill))
-                            dfile.write(" SpaceLeft: "+str(spaceLeft))
-                            dfile.write(" AddCount: "+str(addCount))
-                            dfile.write(" Last: "+str(last))
+                            diag(xcount, spaceToFill, spaceLeft, addCount, last)
                             cCount = 1
                             last = CityOut[x]
                             print ("*NP >15: Space Left = ", spaceLeft)
@@ -228,12 +201,7 @@ def pack_2():
                                 spaceToFill = spaceToFill - cCount 
                                 spaceLeft = spaceLeft - 3
                                 addCount = (addCount + cCount) - 3
-                                dfile.write('\n')
-                                dfile.write("grid count: "+str(xcount))
-                                dfile.write(" SpaceToFill: "+str(spaceToFill))
-                                dfile.write(" SpaceLeft: "+str(spaceLeft))
-                                dfile.write(" AddCount: "+str(addCount))
-                                dfile.write(" Last: "+str(last))
+                                diag(xcount, spaceToFill, spaceLeft, addCount, last)
                                 cCount = 1
                                 last = CityOut[x]
                                 print ("*NP >9: Space Left = ", spaceLeft)
@@ -246,12 +214,7 @@ def pack_2():
                                     spaceToFill = spaceToFill - cCount 
                                     spaceLeft = spaceLeft - 3
                                     addCount = (addCount + cCount) - 3
-                                    dfile.write('\n')
-                                    dfile.write("grid count: "+str(xcount))
-                                    dfile.write(" SpaceToFill: "+str(spaceToFill))
-                                    dfile.write(" SpaceLeft: "+str(spaceLeft))
-                                    dfile.write(" AddCount: "+str(addCount))
-                                    dfile.write(" Last: "+str(last))
+                                    diag(xcount, spaceToFill, spaceLeft, addCount, last)
                                     cCount = 1
                                     last = CityOut[x]
                                     print ("*NP >3: Space Left = ", spaceLeft)
@@ -262,28 +225,16 @@ def pack_2():
                                         CityPacked.append(last)
                                         CityPacked.append(last)
                                         spaceLeft = spaceLeft - 3
-                                        dfile.write('\n')
-                                        dfile.write("grid count: "+str(xcount))
-                                        dfile.write(" SpaceToFill: "+str(spaceToFill))
-                                        dfile.write(" SpaceLeft: "+str(spaceLeft))
-                                        dfile.write(" Last: "+str(last))
+                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
                                     if cCount == 2:
                                         CityPacked.append(last)
                                         CityPacked.append(last)
                                         spaceLeft = spaceLeft - 2
-                                        dfile.write('\n')
-                                        dfile.write("grid count: "+str(xcount))
-                                        dfile.write(" SpaceToFill: "+str(spaceToFill))
-                                        dfile.write(" SpaceLeft: "+str(spaceLeft))
-                                        dfile.write(" Last: "+str(last))
+                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
                                     if cCount == 1:
                                         CityPacked.append(last)
                                         spaceLeft = spaceLeft - 1
-                                        dfile.write('\n')
-                                        dfile.write("grid count: "+str(xcount))
-                                        dfile.write(" SpaceToFill: "+str(spaceToFill))
-                                        dfile.write(" SpaceLeft: "+str(spaceLeft))
-                                        dfile.write(" Last: "+str(last))
+                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
                                     cCount = 1
                                     last = CityOut[x]
             else:  # NoPacking = 1, no more packing...
@@ -352,8 +303,8 @@ def write_Out():
     first3 = 1
     eightCount = 0
     hexCount = 0
-    myfile = open('F7E7-FA98_city_map.asm', 'w')
     print (memNumber)
+    myfile = open('F7E7-FA98_city_map.asm', 'w')
     myfile.write('\n')
     myfile.write('CITY_MAP_DATA:  db ')
     for o in range (690):
@@ -388,6 +339,9 @@ screen = pg.display.set_mode((1200,960))
 pg.display.set_caption("City Editor")
 done = False
 
+
+
+
 CityDisplay = create_grid(900)
 CityOut = create_grid(900)
 
@@ -409,6 +363,10 @@ selectedBlock = 0
 outValue = 0
 north = 0
 east = 0
+
+x_disp = 0
+y_disp = 0
+point_disp = 0
   
 # Define some colors
 BLACK = ( 0, 0, 0)
@@ -454,8 +412,7 @@ pg.draw.rect(screen,BLACK,(1000, 250, 100, 100))
 for a in range(30):
     for b in range (30):
         screen.blit(city[0], ((a*32),(b*32)))
-        pg.display.update()
-
+pg.display.update()
 
 #Loop until the user clicks the close button.
 done = False
@@ -477,58 +434,55 @@ while not done:
             pg.display.update()
  
             if event.type == pg.KEYDOWN:
-                if event.key == pg.K_LEFT:
-                    if selectedBlock > 0:
-                        selectedBlock = selectedBlock - 1
-                        pg.draw.rect(screen,BLACK,(1000, 200, 200, 20))
-                if event.key == pg.K_RIGHT:
-                    if selectedBlock < 17:
-                        selectedBlock = selectedBlock + 1
-                        pg.draw.rect(screen,BLACK,(1000, 200, 200, 20))
-                if event.key == pg.K_UP:
-                    if selectedBlock < 17:
-                        selectedBlock = selectedBlock + 1
-                        pg.draw.rect(screen,BLACK,(1000, 200, 200, 20))
-                if event.key == pg.K_DOWN:
-                    if selectedBlock > 0:
-                        selectedBlock = selectedBlock - 1
-                        pg.draw.rect(screen,BLACK,(1000, 200, 200, 20))
-                if event.key == pg.K_a:
-                    if XPos > 0:
-                        XPos = XPos - 32
-                        LastPointer = CityDisplay[Pointer]
-                        Pointer = Pointer - 1
-                        LastSelected = int(LastPointer)
-                        screen.blit(city[LastSelected], ((XPos+32,YPos)))
-                        pg.draw.rect(screen,BLACK,(1000, 250, 100, 100))
-                        getCoords(Pointer)
-                if event.key == pg.K_d:
-                    if XPos < 928:
-                        XPos = XPos + 32
-                        LastPointer = CityDisplay[Pointer]
-                        Pointer = Pointer + 1
-                        LastSelected = int(LastPointer)
-                        screen.blit(city[LastSelected], ((XPos-32,YPos)))
-                        pg.draw.rect(screen,BLACK,(1000, 250, 100, 100))
-                        getCoords(Pointer)
-                if event.key == pg.K_w:
-                    if Pointer > 29:
-                        YPos = YPos - 32
-                        LastPointer = CityDisplay[Pointer]
-                        Pointer = Pointer - 30
-                        LastSelected = int(LastPointer)
-                        screen.blit(city[LastSelected], ((XPos,YPos+32)))
-                        pg.draw.rect(screen,BLACK,(1000, 250, 100, 100))
-                        getCoords(Pointer)
-                if event.key == pg.K_s:
-                    if Pointer < 870:
-                        YPos = YPos + 32
-                        LastPointer = CityDisplay[Pointer]
-                        Pointer = Pointer + 30
-                        LastSelected = int(LastPointer)
-                        screen.blit(city[LastSelected], ((XPos,YPos-32)))
-                        pg.draw.rect(screen,BLACK,(1000, 250, 100, 100))
-                        getCoords(Pointer)
+                if event.key == pg.K_LEFT and selectedBlock > 0:
+                    selectedBlock += -1
+                        
+                elif event.key == pg.K_RIGHT and selectedBlock < 17:
+                    selectedBlock += 1
+                        
+                elif event.key == pg.K_UP and selectedBlock < 17:
+                    selectedBlock += 1
+                        
+                elif event.key == pg.K_DOWN and selectedBlock > 0:
+                    selectedBlock += -1
+                        
+                pg.draw.rect(screen,BLACK,(1000, 200, 200, 20))
+
+                LastPointer = CityDisplay[Pointer]
+                x_disp = 0
+                y_disp = 0
+                point_disp = 0
+
+                if event.key == pg.K_a and XPos > 0:
+                    x_disp = -32
+                    y_disp = 0
+                    point_disp = -1
+
+                if event.key == pg.K_d and XPos < 928:
+                    x_disp = 32
+                    y_disp = 0
+                    point_disp = 1
+
+                if event.key == pg.K_w and YPos > 29:
+                    x_disp = 0
+                    y_disp = -32
+                    point_disp = -30
+
+                if event.key == pg.K_s and YPos < 928:
+                    x_disp = 0
+                    y_disp = 32
+                    point_disp = 30
+
+
+                LastSelected = int(LastPointer)
+                screen.blit(city[LastSelected], ((XPos,YPos)))
+                pg.draw.rect(screen,BLACK,(1000, 250, 100, 100))
+                getCoords(Pointer)
+               
+                XPos += x_disp
+                YPos += y_disp
+                Pointer += point_disp
+                
                 if event.key == pg.K_p:
                     CityDisplay[Pointer] = selectedBlock
                     CityOut[Pointer] = outValue
@@ -548,94 +502,47 @@ while not done:
                         print("City Map will not pack!")
                               
 
-                #hotkeys
-                if event.key == pg.K_0:
-                    selectedBlock = 0
+                HOTKEYS = {
+                    pg.K_0: 0,
+                    pg.K_1: 1,
+                    pg.K_2: 2,
+                    pg.K_3: 3,
+                    pg.K_4: 4,
+                    pg.K_5: 5,
+                    pg.K_6: 6,
+                    pg.K_7: 7,
+                    pg.K_8: 8,
+                    pg.K_9: 9,
+                }
 
-                if event.key == pg.K_1:
-                    selectedBlock = 1
+                selectedBlock = HOTKEYS.get(event.key, selectedBlock)
 
-                if event.key == pg.K_2:
-                    selectedBlock = 2
+            BLOCKS = {
+                0:  ["      Blank     ", "   0", 'out: 000'],
+                1:  [" Empty Building ", "   1", 'out: 001'],
+                2:  ["    The Guild   ", "   9", 'out: 009'],
+                3:  ["   The  Shoppe  ", " 19h", 'out: 025'],
+                4:  ["  Review Board  ", " 29h", 'out: 041'],
+                5:  ["       Inn      ", " 11h", 'out: 017'],
+                6:  ["   City Gates   ", "0A8h", 'out: 168'],
+                7:  ["      Temple    ", " 21h", 'out: 033'],
+                8:  ["     Roscoe's   ", " 89h", 'out: 137'],
+                9:  [" Guardian Statue", " 60h", 'out: 096'],
+                10: ["    Iron Gate   ", " 68h", 'out: 104'],
+                11: [" Mad God Temple ", " 71h", 'out: 113'],
+                12: ["     Castle     ", " 99h", 'out: 153'],
+                13: ["Kylearans Tower ", " 91h", 'out: 145'],
+                14: [" Mangars Tower  ", "0A1h", 'out: 161'],
+                15: [" Sewer Entrance ", " 78h", 'out: 120'],
+                16: ["  Teleport From ", "   0", 'out: 000'],
+                17: ["  Teleport To:  ", "   0", 'out: 000'],
+            }    
 
-                if event.key == pg.K_3:
-                    selectedBlock = 3
+            if selectedBlock in BLOCKS:
+                text = font.render(BLOCKS[selectedBlock][0], True, RED, BLACK)
+                outValue = BLOCKS[selectedBlock][1]
+                outValRect = font.render(BLOCKS[selectedBlock][2], True, RED, BLACK)
 
-                if event.key == pg.K_4:
-                    selectedBlock = 4
-
-                if event.key == pg.K_5:
-                    selectedBlock = 5
-
-                if event.key == pg.K_6:
-                    selectedBlock = 6
-
-                if event.key == pg.K_7:
-                    selectedBlock = 7
-
-                if event.key == pg.K_8:
-                    selectedBlock = 8
-
-                if event.key == pg.K_9:
-                    selectedBlock = 9
-
-
-
-            if selectedBlock == 0:
-                text = font.render('      Blank     ', True, RED, BLACK)
-                outValue = "   0"
-            if selectedBlock == 1:
-                text = font.render(' Empty Building ', True, RED, BLACK)
-                outValue = "   1"
-            if selectedBlock == 2:
-                text = font.render('   The Guild    ', True, RED, BLACK)
-                outValue = "   9"
-            if selectedBlock == 3:
-                text = font.render('   The Shoppe   ', True, RED, BLACK)
-                outValue = " 19h"
-            if selectedBlock == 4:
-                text = font.render('  Review Board  ', True, RED, BLACK)
-                outValue = " 29h"
-            if selectedBlock == 5:
-                text = font.render('       Inn      ', True, RED, BLACK)
-                outValue = " 11h"
-            if selectedBlock == 6:
-                text = font.render('    City Gates  ', True, RED, BLACK)
-                outValue = "0A8h"
-            if selectedBlock == 7:
-                text = font.render('      Temple    ', True, RED, BLACK)
-                outValue = " 21h"
-            if selectedBlock == 8:
-                text = font.render('     Roscoe''s  ', True, RED, BLACK)
-                outValue = " 89h"
-            if selectedBlock == 9:
-                text = font.render(' Guardian Statue', True, RED, BLACK)
-                outValue = " 60h"
-            if selectedBlock == 10:
-                text = font.render('    Iron Gate   ', True, RED, BLACK)
-                outValue = " 68h"
-            if selectedBlock == 11:
-                text = font.render(' Mad God Temple ', True, RED, BLACK)
-                outValue = " 71h"
-            if selectedBlock == 12:
-                text = font.render('      Castle    ', True, RED, BLACK)
-                outValue = " 99h"
-            if selectedBlock == 13:
-                text = font.render('Kylearans Tower ', True, RED, BLACK)
-                outValue = " 91h"
-            if selectedBlock == 14:
-                text = font.render('  Mangars Tower ', True, RED, BLACK)
-                outValue = "0A1h"
-                outValRect = font.render('out: 161', True, RED, BLACK)
-            if selectedBlock == 15:
-                text = font.render(' Sewer Entrance ', True, RED, BLACK)
-                outValue = " 78h"
-            if selectedBlock == 16:
-                text = font.render(' Teleport From  ', True, RED, BLACK)
-                outValue = "   0"
-            if selectedBlock == 17:
-                text = font.render(' Teleport To:   ', True, RED, BLACK)
-                outValue = "   0"
 
 
         # Go ahead and update the screen with what we've drawn.
