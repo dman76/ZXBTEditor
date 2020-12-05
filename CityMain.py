@@ -28,23 +28,28 @@ def strip_from_sheet(sheet, start, size, columns, rows):
 def create_grid (size):
     return ["   0" for _ in range(size)]
  
-def dec2hex(n):
-    return "%X" % n
 
-def dec2hex10_16(n):
-    if n == 10:
-        hexValue = ' 0Ah'
-    if n == 11:
-        hexValue = ' 0Bh'
-    if n == 12:
-        hexValue = ' 0Ch'
-    if n == 13:
-        hexValue = ' 0Dh'
-    if n == 14:
-        hexValue = ' 0Eh'
-    if n == 15:
-        hexValue = ' 0Fh'
-    return hexValue
+def dec2hexAll(n):
+    if n < 10:
+        return '   '+str(n)
+    else:
+        if n > 9 and n < 16:
+           return ' 0'+("%X" % n)+'h'
+        else:
+            if n > 159:
+                return '0'+("%X" % n)+'h'
+            else:
+                return ' '+("%X" % n)+'h'
+
+
+def coordsInHex(n):
+    if n < 10:
+        return '0'+str(n)
+    else:
+        if n > 9 and n < 16:
+            return '0'+str("%X" % n)
+        else:
+            return "%X" % n
 
 def getCoords(x):
     print (x)
@@ -102,57 +107,33 @@ def pack_2():
                             diag(xcount, spaceToFill, spaceLeft, addCount, last)
                             print (">30: Space Left = ", spaceLeft)
                             print ("Space to fill with packing: ", spaceToFill)
-                        if packLeft > 15:
-                            CityPacked.append("0FCh")                   
-                            CityPacked.append(' '+str(dec2hex(packLeft))+'h')
+                        if packLeft > 3:
+                            CityPacked.append("0FCh")
+                            CityPacked.append(str(dec2hexAll(packLeft)))
                             CityPacked.append(last)
                             spaceToFill = spaceToFill - cCount 
                             spaceLeft = spaceLeft - 3
                             diag(xcount, spaceToFill, spaceLeft, addCount, last)
                             last = CityOut[x]
-                            print (">15: Space Left = ", spaceLeft)
-                            print ("Space to fill with packing: ", spaceToFill)
                         else:
-                            if packLeft > 9:
-                                CityPacked.append("0FCh")
-                                CityPacked.append(str(dec2hex10_16(packLeft)))                         
-                                CityPacked.append(last)
-                                spaceToFill = spaceToFill - cCount 
-                                spaceLeft = spaceLeft - 3
-                                diag(xcount, spaceToFill, spaceLeft, addCount, last)
-                                last = CityOut[x]
-                                print (">9: Space Left = ", spaceLeft)
-                                print ("Space to fill with packing: ", spaceToFill)
-                            else:
-                                if packLeft > 3:
-                                    CityPacked.append("0FCh")                           
-                                    CityPacked.append('   '+str(packLeft))
+                                if packLeft == 3:
                                     CityPacked.append(last)
-                                    spaceToFill = spaceToFill - cCount 
+                                    CityPacked.append(last)
+                                    CityPacked.append(last)
                                     spaceLeft = spaceLeft - 3
                                     diag(xcount, spaceToFill, spaceLeft, addCount, last)
                                     last = CityOut[x]
-                                    print (">3: Space Left = ", spaceLeft)
-                                    print ("Space to fill with packing: ", spaceToFill)
-                                else:
-                                    if packLeft == 3:
-                                        CityPacked.append(last)
-                                        CityPacked.append(last)
-                                        CityPacked.append(last)
-                                        spaceLeft = spaceLeft - 3
-                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
-                                        last = CityOut[x]
-                                    if packLeft == 2:
-                                        CityPacked.append(last)
-                                        CityPacked.append(last)
-                                        spaceLeft = spaceLeft - 2
-                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
-                                        last = CityOut[x]
-                                    if packLeft == 1:
-                                        CityPacked.append(last)
-                                        spaceLeft = spaceLeft - 1
-                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
-                                        last = CityOut[x]
+                                if packLeft == 2:
+                                    CityPacked.append(last)
+                                    CityPacked.append(last)
+                                    spaceLeft = spaceLeft - 2
+                                    diag(xcount, spaceToFill, spaceLeft, addCount, last)
+                                    last = CityOut[x]
+                                if packLeft == 1:
+                                    CityPacked.append(last)
+                                    spaceLeft = spaceLeft - 1
+                                    diag(xcount, spaceToFill, spaceLeft, addCount, last)
+                                    last = CityOut[x]
                         #Write remainder (if any, unpacked)
                         for r in range (1, (cCount+1)):
                             CityPacked.append(last)
@@ -181,9 +162,9 @@ def pack_2():
                             diag(xcount, spaceToFill, spaceLeft, addCount, last)
                             print ("*NP >30: Space Left = ", spaceLeft)
                             print ("Space to fill with packing: ", spaceToFill)
-                        if cCount > 15:
+                        if cCount > 3:
                             CityPacked.append("0FCh")                   
-                            CityPacked.append(' '+str(dec2hex(cCount))+'h')
+                            CityPacked.append(str(dec2hexAll(cCount)))
                             CityPacked.append(last)
                             spaceToFill = spaceToFill - cCount 
                             spaceLeft = spaceLeft - 3
@@ -194,60 +175,32 @@ def pack_2():
                             print ("*NP >15: Space Left = ", spaceLeft)
                             print ("Space to fill with packing: ", spaceToFill)
                         else:
-                            if cCount > 9:
-                                CityPacked.append("0FCh")
-                                CityPacked.append(str(dec2hex10_16(cCount)))                         
+                            if cCount == 3:
                                 CityPacked.append(last)
-                                spaceToFill = spaceToFill - cCount 
+                                CityPacked.append(last)
+                                CityPacked.append(last)
                                 spaceLeft = spaceLeft - 3
-                                addCount = (addCount + cCount) - 3
                                 diag(xcount, spaceToFill, spaceLeft, addCount, last)
-                                cCount = 1
-                                last = CityOut[x]
-                                print ("*NP >9: Space Left = ", spaceLeft)
-                                print ("Space to fill with packing: ", spaceToFill)
-                            else:
-                                if cCount > 3:
-                                    CityPacked.append("0FCh")                           
-                                    CityPacked.append('   '+str(cCount))
-                                    CityPacked.append(last)
-                                    spaceToFill = spaceToFill - cCount 
-                                    spaceLeft = spaceLeft - 3
-                                    addCount = (addCount + cCount) - 3
-                                    diag(xcount, spaceToFill, spaceLeft, addCount, last)
-                                    cCount = 1
-                                    last = CityOut[x]
-                                    print ("*NP >3: Space Left = ", spaceLeft)
-                                    print ("Space to fill with packing: ", spaceToFill)
-                                else:
-                                    if cCount == 3:
-                                        CityPacked.append(last)
-                                        CityPacked.append(last)
-                                        CityPacked.append(last)
-                                        spaceLeft = spaceLeft - 3
-                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
-                                    if cCount == 2:
-                                        CityPacked.append(last)
-                                        CityPacked.append(last)
-                                        spaceLeft = spaceLeft - 2
-                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
-                                    if cCount == 1:
-                                        CityPacked.append(last)
-                                        spaceLeft = spaceLeft - 1
-                                        diag(xcount, spaceToFill, spaceLeft, addCount, last)
-                                    cCount = 1
-                                    last = CityOut[x]
+                            if cCount == 2:
+                                CityPacked.append(last)
+                                CityPacked.append(last)
+                                spaceLeft = spaceLeft - 2
+                                diag(xcount, spaceToFill, spaceLeft, addCount, last)
+                            if cCount == 1:
+                                CityPacked.append(last)
+                                spaceLeft = spaceLeft - 1
+                                diag(xcount, spaceToFill, spaceLeft, addCount, last)
+                            cCount = 1
+                            last = CityOut[x]
             else:  # NoPacking = 1, no more packing...
                     CityPacked.append(CityOut[x])
 
 
 def find_Guild():
-    gridCount = 0
     guildCount = 0
     gfile = open('constants_guild.asm', 'w')
     gfile.write('GUILD_COORDS	EQU ')
     for z in range(900):
-        gridCount = gridCount + 1
         if CityOut[z] == "   9":
             if guildCount == 1:
                 print("Warning: > 1 Guild, 1st will be start location")
@@ -257,45 +210,9 @@ def find_Guild():
                     guild_north = '1D'  #29
                     guild_east = '00'
                 else:
-                    guild_north = 29 - (z // 30)
-                    if guild_north > 15:
-                        guild_north = str(dec2hex(guild_north))
-                    else:
-                        if guild_north > 9:
-                                if guild_north == 10:
-                                    guild_north = '0A'
-                                if guild_north == 11:
-                                    guild_north = '0B'
-                                if guild_north == 12:
-                                    guild_north = '0C'
-                                if guild_north == 13:
-                                    guild_north = '0D'
-                                if guild_north == 14:
-                                    guild_north = '0E'
-                                if guild_north == 15:
-                                    guild_north = '0F'
-                        else:
-                            guild_north = '0'+str(guild_north)
+                    guild_north = str(coordsInHex(29- ( z// 30)))
                     gfile.write(str(guild_north))
-                    guild_east = z % 30
-                    if guild_east > 15:
-                        guild_east = str(dec2hex(guild_east))
-                    else:
-                        if guild_east > 9:
-                                if guild_east == 10:
-                                    guild_east = '0A'
-                                if guild_east == 11:
-                                    guild_east = '0B'
-                                if guild_east == 12:
-                                    guild_east = '0C'
-                                if guild_east == 13:
-                                    guild_east = '0D'
-                                if guild_east == 14:
-                                    guild_east = '0E'
-                                if guild_east == 15:
-                                    guild_east = '0F'
-                        else:
-                            guild_east = '0'+str(guild_east)
+                    guild_east = str(coordsInHex(z % 30))
                     gfile.write(str(guild_east)+'h')
                            
                 
@@ -310,7 +227,7 @@ def write_Out():
     for o in range (690):
         print ("index: " + str(o))
         if eightCount == 33:
-            myfile.write('; '+ str(dec2hex(hexCount)))
+            myfile.write('; '+ str(dec2hexAll(hexCount)))
             hexCount = hexCount + 32
             eightCount = 1
         if eightCount == 1:
