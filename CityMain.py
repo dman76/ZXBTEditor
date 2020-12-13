@@ -43,6 +43,7 @@ def dec2hexAll(n):
 
 
 def coordsInHex(n):
+    print('coords in hex: ' + str(n))
     if n < 10:
         return '0'+str(n)
     else:
@@ -51,20 +52,41 @@ def coordsInHex(n):
         else:
             return "%X" % n
 
-def getCoords(x):
+
+def getNorth(x):
     print (x)
     if x == 0:
         north = 29
-        east = 0
     else:
         north = 29 - (x // 30)
-        east = x % 30
-        textX = font.render(str(east), True, RED, BLACK)
-        textY = font.render(str(north), True, RED, BLACK)
-        pg.display.update()
         print (north)
+    if north == 9:
+        blankBox(4)
+    return north
+
+def getEast(x):
+    print (x)
+    if x == 0:
+        east = 0
+    else:
+        east = x % 30
         print (east)
-    #return N, E
+    if east == 9:
+        blankBox(4)
+    return east
+
+def blankBox(selected):
+    if selected == 0:   # Blank Selected Building picture box
+        pg.draw.rect(screen,BLACK, (1013,3,132,132))
+    if selected == 1:   # Blank Selected Text Box
+        pg.draw.rect(screen,BLACK, (981,151,198,28))
+    if selected == 2:    # Blank Secondary text  box
+        pg.draw.rect(screen,BLACK, (981,251,198,28))
+    if selected == 3:   # Blank long text information box
+        pg.draw.rect(screen,BLACK,(981, 301, 198, 648))
+    if selected == 4:   # Blank coordinates box
+        pg.draw.rect(screen,BLACK,(1057, 197, 48, 40))
+        
 
 def diag(xcount, spaceToFill, spaceLeft, addCount, last):
     dfile = open('diagnost.txt', 'a')
@@ -215,7 +237,71 @@ def find_Guild():
                     guild_east = str(coordsInHex(z % 30))
                     gfile.write(str(guild_east)+'h')
                            
-                
+
+def configureTavern(x):
+
+        print(x)
+        doneInn = False
+        innValue = 0
+        #innText = font.render(INNS[innValue][0], True, RED, BLACK)
+        text = font.render(INNS[innValue][0], True, RED, BLACK)
+        blankBox(2)
+        configText = font.render("Configure Tavern", True, RED, BLACK)
+        screen.blit(configText, (1020, 256))
+
+        t0Text = font.render("Current Coords:", True, RED, BLACK)
+        screen.blit(t0Text, (1010, 305))
+
+        for t in range (1, 8):
+            tText = font.render(str(INNS[t][0]), True, RED, BLACK)
+            if (INNS[t][2] == '00' and INNS[t][3] == '00'):
+                tCoords = font.render("Unassigned", True, RED, BLACK)
+            else:
+                tCoords = font.render("N: "+str(INNS[t][4])+ "   E: "+str(INNS[t][5]), True, RED, BLACK)
+            screen.blit(tText, (1002, (300+(t*50))))
+            screen.blit(tCoords, (1010,(320+(t*50))))
+        
+        while not doneInn:
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN:
+                   
+                    if event.key == pg.K_z:
+                        if innValue == 0:
+                            innValue = 7
+                        else:
+                            innValue = innValue - 1
+                    if event.key == pg.K_x:
+                        if innValue == 7:
+                            innValue = 0
+                        else:
+                            innValue = innValue + 1
+                    if event.key == pg.K_c:
+                        # confirm
+                        #update north coordinate
+                        if innValue != 0:   # Don't update coords for default tavern!
+                            INNS[innValue][2] = coordsInHex(getNorth(x))
+                            INNS[innValue][3] = coordsInHex(getEast(x))
+                            INNS[innValue][4] = getNorth(x)
+                            INNS[innValue][5] = getEast(x)
+                            print (INNS[innValue][0])
+                            print (INNS[innValue][2])
+                            print (INNS[innValue][3])
+                        doneInn = True
+                        
+            
+            blankBox(1)
+            text = font.render(INNS[innValue][0], True, RED, BLACK)
+            screen.blit(text, (1020, 157))
+            pg.display.update()
+
+        blankBox(2)
+        blankBox(3)
+        configText = font.render("  City Editor", True, RED, BLACK)
+        screen.blit(configText, (1020, 256))
+        t0Text = font.render("Tavern Updated", True, RED, BLACK)
+        screen.blit(t0Text, (1010, 305))
+        pg.display.update()
+                        
 def write_Out():
     first3 = 1
     eightCount = 0
@@ -269,7 +355,7 @@ sheetBig = pg.image.load('CitySpriteSheet128.png')
 cityBig = strip_from_sheet(sheetBig, (0,0), (128,128), 3, 6)
 
 
-selectX = 1000
+selectX = 1015
 selectY = 5
 XPos = 0
 YPos = 0
@@ -299,29 +385,61 @@ display_surface.fill(BLACK)
 font = pg.font.Font('freesansbold.ttf', 16)
 text = font.render('     Blank     ', True, RED, BLACK)
 textX = font.render('E: '+str(east), True, RED, BLACK)
-textY = font.render('N: '+str(north), True, RED, BLACK)
-textOut = font.render('000', True, RED, BLACK)
+textY = font.render('N: 29', True, RED, BLACK)
+#textOut = font.render('000', True, RED, BLACK)
 
 # create a rectangular object for the 
 # text surface object 
-textRect = text.get_rect()  
+#textRect = text.get_rect()  
   
 # set the center of the rectangular object. 
-textRect = (selectX, 200)
+#textRect = (selectX, 157)
 
-coordxRect = textX.get_rect()
-coordxRect = (selectX, 250)
-coordyRect = textY.get_rect()
-coordyRect = (selectX, 275)
-outValRect = textOut.get_rect()
-outValRect = (selectX, 540)
+#coordxRect = textX.get_rect()
+#coordxRect = (selectX, 200)
+#coordyRect = textY.get_rect()
+#coordyRect = (selectX, 220)
+#outValRect = textOut.get_rect()
+#outValRect = (selectX, 540)
 
 # text boxes init
-pg.draw.rect(screen,RED,(1000, 300, 150, 500))
-pg.draw.rect(screen,BLACK,(1001, 301, 148, 498))
-pg.draw.rect(screen,BLACK,(1000, 200, 200, 10))
 
-pg.draw.rect(screen,BLACK,(1000, 250, 100, 100))
+#Draw outline around selected building picture
+pg.draw.rect(screen,RED,(1012,2,134,134))
+pg.draw.rect(screen,BLACK, (1013,3,132,132))
+
+#Draw outline around main text box
+pg.draw.rect(screen,RED, (980,150, 200, 30))
+pg.draw.rect(screen,BLACK, (981,151,198,28))
+
+#Draw outline around secondary text box
+pg.draw.rect(screen,RED, (980,250, 200, 30))
+pg.draw.rect(screen,BLACK, (981,251,198,28))
+
+#Draw outline around long information box
+pg.draw.rect(screen,RED,(980, 300, 200, 650))
+pg.draw.rect(screen,BLACK,(981, 301, 198, 648))
+
+#Draw outline around coordinates box
+pg.draw.rect(screen,RED,(1056, 196, 50, 42))
+pg.draw.rect(screen,BLACK,(1057, 197, 48, 40))
+
+#Set initial text
+configText = font.render("  City Editor", True, RED, BLACK)
+screen.blit(configText, (1020, 256))
+
+
+INNS = {
+    #Name , output value, N coord HEX, E coord Hex, N coord Dec, E coord Dec
+0:  ["Unnamed Tavern", "0", "00", "00", "00", "00"],
+1:  [" Scarlet Bard", "44h", "00", "00", "00", "00"],
+2:  ["  Sinister Inn", "45h", "00", "00", "00", "00"],
+3:  ["Dragon's Breath", "46h", "00", "00", "00", "00"],
+4:  [" Ask Y'Mother", "47h", "00", "00", "00", "00"],
+5:  [" Archmage Inn", "48h", "00", "00", "00", "00"],
+6:  [" Skull Tavern", "49h", "00", "00", "00", "00"],
+7:  [" Drawn Blade", "4Ah", "00", "00", "00", "00"]
+}
 
 
 #Draw initial blank grid
@@ -341,13 +459,13 @@ while not done:
                 done = True # Flag that we are done so we exit this loop
 
             screen.blit(cityBig[selectedBlock], (selectX,selectY))
-            display_surface.blit(text, textRect)
-            screen.blit(text, textRect)
+            #display_surface.blit(text, textRect)
+            blankBox(1)
+            screen.blit(text, (1020, 156))
             screen.blit(city[selectedBlock], (XPos,YPos))
-            display_surface.blit(textX, coordxRect)
-            display_surface.blit(textY, coordyRect)
-            screen.blit(textX, (1000, 250))
-            screen.blit(textY, (1000, 275))
+            screen.blit(textX, (1060, 200))
+            screen.blit(textY, (1060, 220))
+
             pg.display.update()
  
             if event.type == pg.KEYDOWN:
@@ -363,7 +481,7 @@ while not done:
                 elif event.key == pg.K_DOWN and selectedBlock > 0:
                     selectedBlock += -1
                         
-                pg.draw.rect(screen,BLACK,(1000, 200, 200, 20))
+                pg.draw.rect(screen,BLACK,(1000, 200, 20, 20))
 
                 LastPointer = CityDisplay[Pointer]
                 x_disp = 0
@@ -393,12 +511,14 @@ while not done:
 
                 LastSelected = int(LastPointer)
                 screen.blit(city[LastSelected], ((XPos,YPos)))
-                pg.draw.rect(screen,BLACK,(1000, 250, 100, 100))
-                getCoords(Pointer)
+
                
                 XPos += x_disp
                 YPos += y_disp
                 Pointer += point_disp
+
+                textX = font.render('E: '+str(getEast(Pointer)), True, RED, BLACK)
+                textY = font.render('N: '+str(getNorth(Pointer)), True, RED, BLACK)
                 
                 if event.key == pg.K_p:
                     CityDisplay[Pointer] = selectedBlock
@@ -418,6 +538,11 @@ while not done:
                     else:
                         print("City Map will not pack!")
                               
+                if event.key == pg.K_c:
+                    # configurable properties
+                    if CityOut[Pointer] == " 11h":
+                        print ('Tavern config')
+                        configureTavern(Pointer)
 
                 HOTKEYS = {
                     pg.K_0: 0,
@@ -435,22 +560,22 @@ while not done:
                 selectedBlock = HOTKEYS.get(event.key, selectedBlock)
 
             BLOCKS = {
-                0:  ["      Blank     ", "   0", 'out: 000'],
+                0:  ["       Blank     ", "   0", 'out: 000'],
                 1:  [" Empty Building ", "   1", 'out: 001'],
                 2:  ["    The Guild   ", "   9", 'out: 009'],
-                3:  ["   The  Shoppe  ", " 19h", 'out: 025'],
+                3:  ["  The  Shoppe  ", " 19h", 'out: 025'],
                 4:  ["  Review Board  ", " 29h", 'out: 041'],
-                5:  ["       Inn      ", " 11h", 'out: 017'],
+                5:  ["       Tavern     ", " 11h", 'out: 017'],
                 6:  ["   City Gates   ", "0A8h", 'out: 168'],
-                7:  ["      Temple    ", " 21h", 'out: 033'],
+                7:  ["       Temple    ", " 21h", 'out: 033'],
                 8:  ["     Roscoe's   ", " 89h", 'out: 137'],
-                9:  [" Guardian Statue", " 60h", 'out: 096'],
+                9:  ["Guardian Statue", " 60h", 'out: 096'],
                 10: ["    Iron Gate   ", " 68h", 'out: 104'],
-                11: [" Mad God Temple ", " 71h", 'out: 113'],
-                12: ["     Castle     ", " 99h", 'out: 153'],
+                11: ["Mad God Temple ", " 71h", 'out: 113'],
+                12: ["      Castle     ", " 99h", 'out: 153'],
                 13: ["Kylearans Tower ", " 91h", 'out: 145'],
                 14: [" Mangars Tower  ", "0A1h", 'out: 161'],
-                15: [" Sewer Entrance ", " 78h", 'out: 120'],
+                15: ["Sewer Entrance ", " 78h", 'out: 120'],
                 16: ["  Teleport From ", "   0", 'out: 000'],
                 17: ["  Teleport To:  ", "   0", 'out: 000'],
             }    
