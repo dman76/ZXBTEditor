@@ -12,6 +12,10 @@ dfile.write('\n')
 dfile.write('Diagnostic:')
 dfile.close()
 
+tavernFile = open('E8DE-E8F5_inns_data.asm', 'w')
+tavernFile.write('inns_data:')
+tavernFile.write('\n')
+tavernFile.close()
 
 def main():
     """ Main Program """
@@ -97,6 +101,22 @@ def diag(xcount, spaceToFill, spaceLeft, addCount, last):
     dfile.write(" AddCount: "+str(addCount))
     dfile.write(" Last: "+str(last))
     dfile.close()
+
+def writeTavern():
+    tavernFile = open('E8DE-E8F5_inns_data.asm', 'a')
+    for t in range (1, 8):
+        tavernFile.write('		db  ')
+        tavernFile.write(str(INNS[t][2])+', ')
+        tavernFile.write(str(INNS[t][3])+', ')
+        tavernFile.write(str(INNS[t][1]))
+        tavernFile.write('      ; '+str(INNS[t][0])+' Coords + Identifier')
+        tavernFile.write('\n')
+    tavernFile.write('\n')
+    tavernFile.write('default_inn:')
+    tavernFile.write('\n')
+    tavernFile.write('		db 0FFh,0FFh,0')
+    tavernFile.close()
+
 
 def pack_2():
     cCount = 1
@@ -279,8 +299,8 @@ def configureTavern(x):
                         # confirm
                         #update north coordinate
                         if innValue != 0:   # Don't update coords for default tavern!
-                            INNS[innValue][2] = coordsInHex(getNorth(x))
-                            INNS[innValue][3] = coordsInHex(getEast(x))
+                            INNS[innValue][2] = dec2hexAll(getNorth(x))
+                            INNS[innValue][3] = dec2hexAll(getEast(x))
                             INNS[innValue][4] = getNorth(x)
                             INNS[innValue][5] = getEast(x)
                             print (INNS[innValue][0])
@@ -335,6 +355,8 @@ def write_Out():
                 eightCount = eightCount + 2
             else:
                 eightCount = eightCount + 1
+    # Write Tavern Coords
+    writeTavern()
             
 pg.init()
    
@@ -386,21 +408,6 @@ font = pg.font.Font('freesansbold.ttf', 16)
 text = font.render('     Blank     ', True, RED, BLACK)
 textX = font.render('E: '+str(east), True, RED, BLACK)
 textY = font.render('N: 29', True, RED, BLACK)
-#textOut = font.render('000', True, RED, BLACK)
-
-# create a rectangular object for the 
-# text surface object 
-#textRect = text.get_rect()  
-  
-# set the center of the rectangular object. 
-#textRect = (selectX, 157)
-
-#coordxRect = textX.get_rect()
-#coordxRect = (selectX, 200)
-#coordyRect = textY.get_rect()
-#coordyRect = (selectX, 220)
-#outValRect = textOut.get_rect()
-#outValRect = (selectX, 540)
 
 # text boxes init
 
