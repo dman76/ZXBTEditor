@@ -23,6 +23,9 @@ statueFile.write('___table_70:')
 statueFile.write('\n')
 statueFile.close()
 
+ironGatesFile = open('constants_gates.asm', 'w')
+ironGatesFile.close()
+
 def main():
     """ Main Program """
     
@@ -147,6 +150,18 @@ def writeStatues():
         statueFile.write('          db  ')
         statueFile.write(str(STATUES[s][3]+','+STATUES[s][4]))
     statueFile.close()
+
+
+def writeGates():
+    ironGatesFile = open('constants_gates.asm', 'a')
+    for t in range (1, 5):
+        ironGatesFile.write('          db  ')
+        ironGatesFile.write(str(IRONGATES[t][1])+', ')
+        ironGatesFile.write(str(IRONGATES[t][2])+', ')
+        ironGatesFile.write(str(IRONGATES[t][5]))
+        ironGatesFile.write('      ; '+str(IRONGATES[t][0])+' Coords + Direction')
+        ironGatesFile.write('\n')
+    ironGatesFile.close()
 
 
 def pack_2():
@@ -471,7 +486,99 @@ def configureStatue(x):
         t0Text = font.render("Statue Updated", True, RED, BLACK)
         screen.blit(t0Text, (1010, 305))
         pg.display.update()
+
+def configureIronGate(x):
+
+        print(x)
+        doneGate = False
+        gateValue = 1
+        direction = 0
+        text = font.render(IRONGATES[gateValue][0], True, RED, BLACK)
+        blankBox(2)
+        blankBox(4)
+        configText = font.render("Configure: "+str(IRONGATES[gateValue][0]), True, RED, BLACK)
+        screen.blit(configText, (1002, 256))
+
+        t0Text = font.render("Current Coords:", True, RED, BLACK)
+        screen.blit(t0Text, (1010, 305))
+
+        for g in range (1, 5):
+            gText = font.render('Iron Gate: '+str(g), True, RED, BLACK)
+            if (IRONGATES[g][3] == '00' and IRONGATES[g][4] == '00'):
+                tCoords = font.render("Unassigned", True, RED, BLACK)
+            else:
+                tCoords = font.render("N: "+str(IRONGATES[g][3])+ "  E: "+str(IRONGATES[g][4])+ "  Faces: "+ str(IRONGATES[g][6]), True, RED, BLACK)
+            screen.blit(gText, (1002, (340+(g*60))))
+            screen.blit(tCoords, (1010,(360+(g*60))))
+        
+        while not doneGate:
+            for event in pg.event.get():
+                if event.type == pg.KEYDOWN:
+                   
+                    if event.key == pg.K_z:
+                        if gateValue == 1:
+                            gateValue = 4
+                            blankBox(2)
+                        else:
+                            gateValue = gateValue - 1
+                    if event.key == pg.K_x:
+                        if gateValue == 4:
+                            gateValue = 1
+                            blankBox(2)
+                        else:
+                            gateValue = gateValue + 1     
+                    if event.key == pg.K_j:
+                        if direction == 0:
+                            direction = 4
+                        else:
+                            direction = direction - 1
+                    if event.key == pg.K_l:
+                        if direction == 4:
+                            direction = 0
+                            blankBox(4)
+                        else:
+                            direction = direction + 1      
+                       
+                    if event.key == pg.K_c:
+                        # confirm
+                        #update north coordinate
+                        IRONGATES[gateValue][1] = dec2hexAll(getNorth(x))
+                        IRONGATES[gateValue][2] = dec2hexAll(getEast(x))
+                        IRONGATES[gateValue][3] = getNorth(x)
+                        IRONGATES[gateValue][4] = getEast(x)
+                        IRONGATES[gateValue][5] = DIRECTIONS_PARAM[direction]
+                        IRONGATES[gateValue][6] = DIRECTIONS[direction]
+                        print (IRONGATES[gateValue][0])
+                        print (IRONGATES[gateValue][1])
+                        print (IRONGATES[gateValue][2])
+                        print (IRONGATES[gateValue][3])
+                        print (IRONGATES[gateValue][4])
+                        print (IRONGATES[gateValue][5])
+                        print (IRONGATES[gateValue][6])
+                        doneGate = True
                         
+            
+            blankBox(1)
+##            text = font.render(str(MONSTERS[monsterValue][0]), True, RED, BLACK)
+##            screen.blit(text, (1020, 157))
+            configText = font.render("Configure: "+str(IRONGATES[gateValue][0]), True, RED, BLACK)
+            screen.blit(configText, (1002, 256))
+            face = str(DIRECTIONS[direction])
+            directionText = font.render(face, True, RED, BLACK)
+            screen.blit(directionText, (1065, 210))
+            pg.display.update()
+
+        blankBox(2)
+        blankBox(3)
+        blankBox(4)
+        configText = font.render("  City Editor", True, RED, BLACK)
+        screen.blit(configText, (1020, 256))
+        t0Text = font.render("Gate Updated", True, RED, BLACK)
+        screen.blit(t0Text, (1010, 305))
+        pg.display.update()
+
+
+                     
 def write_Out():
     first3 = 1
     eightCount = 0
@@ -508,6 +615,7 @@ def write_Out():
     # Write Tavern & Statue Coords
     writeTavern()
     writeStatues()
+    writeGates()
             
 pg.init()
    
@@ -588,6 +696,7 @@ screen.blit(configText, (1020, 256))
 
 
 DIRECTIONS = ['U','N','E','S','W']
+DIRECTIONS_PARAM = ['UNASSIGNED','FACE_NORTH','FACE_EAST','FACE_SOUTH','FACE_WEST']
 
 
 INNS = {
@@ -615,6 +724,15 @@ STATUES = {
 8:  ["Statue 8", "00", "00", "00", "00", "00", "00", "0", "U"],
 9:  ["Statue 9", "00", "00", "00", "00", "00", "00", "0", "U"],
 10:  ["Statue 10", "00", "00", "00", "00", "00", "00", "0", "U"]
+}
+
+IRONGATES = {
+    #Name, N coord hex, E coord hex, N coord dec, E Coord dec, Direction, Direction display
+0:  ["Iron Gate 0", "00", "00", "00", "00", "0", "U"],
+1:  ["Iron Gate 1", "00", "00", "00", "00", "0", "U"],
+2:  ["Iron Gate 2", "00", "00", "00", "00", "0", "U"],
+3:  ["Iron Gate 3", "00", "00", "00", "00", "0", "U"],
+4:  ["Iron Gate 4", "00", "00", "00", "00", "0", "U"]
 }
 
 MONSTERS = {
@@ -852,6 +970,9 @@ while not done:
                     if CityOut[Pointer] == " 60h":
                         print ('Statue config')
                         configureStatue(Pointer)
+                    if CityOut[Pointer] == " 68h":
+                        print ('Iron Gate config')
+                        configureIronGate(Pointer)
 
                 HOTKEYS = {
                     pg.K_0: 0,
