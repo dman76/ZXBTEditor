@@ -6,8 +6,7 @@ import pygame as pg
 from pygame.locals import *
 import sys
 
-import MonsterList
-
+from MonsterList import *
 
 CURRDIR = sys.path[0]
 DATADIR = CURRDIR + '\\data\\'
@@ -400,7 +399,7 @@ def configureStatue(x):
             tText = font.render("Unassigned", True, RED, BLACK)
         else:
             stat = STATUES[t][2]
-            tText = font.render(str(MONSTERS[stat][0]), True, RED, BLACK)
+            tText = font.render(str(MONSTERS_COPY[stat][0]), True, RED, BLACK)
         if (STATUES[t][3] == '00' and STATUES[t][4] == '00'):
             tCoords = font.render("Unassigned", True, RED, BLACK)
         else:
@@ -460,7 +459,7 @@ def configureStatue(x):
                 if event.key == pg.K_c:
                     # confirm
                     #update north coordinate
-                    STATUES[statueValue][1] = MONSTERS[monsterValue][1]
+                    STATUES[statueValue][1] = MONSTERS_COPY[monsterValue][1]
                     STATUES[statueValue][2] = monsterValue
                     STATUES[statueValue][3] = dec2hexAll(getNorth(x))
                     STATUES[statueValue][4] = dec2hexAll(getEast(x))
@@ -476,7 +475,7 @@ def configureStatue(x):
                     
         
         blankBox(1)
-        text = font.render(str(MONSTERS[monsterValue][0]), True, RED, BLACK)
+        text = font.render(str(MONSTERS_COPY[monsterValue][0]), True, RED, BLACK)
         screen.blit(text, (1020, 157))
         configText = font.render("Configure: "+str(STATUES[statueValue][0]), True, RED, BLACK)
         screen.blit(configText, (1010, 256))
@@ -740,6 +739,9 @@ IRONGATES = {
     4:  ["Iron Gate 4", "00", "00", "00", "00", "0", "U"]
 }
 
+
+MONSTERS_COPY = []
+MONSTERS_COPY = MONSTERS.copy()
 
 #Draw initial blank grid
 
