@@ -1,3 +1,5 @@
+""" Support functions and constants for BT editor """
+
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -30,10 +32,13 @@ DIRECTIONS_PARAM = ['UNASSIGNED', 'FACE_NORTH', 'FACE_EAST', 'FACE_SOUTH', 'FACE
 
 
 def create_grid(size):
+    """Return empty grid"""
     return ["   0" for _ in range(size)]
 
 
-def dec2hexAll(num):
+def dec2hex_all(num):
+    """Convert decimal to hex"""
+
     if num < 10:
         return '   '+str(num)
     else:
@@ -46,7 +51,9 @@ def dec2hexAll(num):
                 return ' '+("%X" % num)+'h'
 
 
-def coordsInHex(num):
+def coords_in_hex(num):
+    """Return coords in hex"""
+
     print('coords in hex: ' + str(num))
 
     if num < 10:
@@ -58,11 +65,23 @@ def coordsInHex(num):
             return "%X" % num
 
 
-def diag(xcount, space_to_fill, space_left, add_count, last):
-    with open(DATADIR+'diagnost.txt', 'a') as outfile:
+def diag(filedir, xcount, space_to_fill, space_left, add_count, last):
+    """Write diagnostics file"""
+
+    with open(filedir+'diagnost.txt', 'a') as outfile:
         outfile.write('\n')
         outfile.write(f"grid count: {xcount}")
         outfile.write(f" SpaceToFill: {space_to_fill}")
         outfile.write(f" SpaceLeft: {space_left}")
         outfile.write(f" AddCount: {add_count}")
         outfile.write(f" Last: {last}")
+
+
+def get_north(num):
+    """Return North coordinate"""
+    return 29 if num == 0 else 29 - (num // 30)
+
+
+def get_east(num):
+    """Return East coordinate"""
+    return 0 if num == 0 else num % 30

@@ -1,8 +1,20 @@
+""" Statues for BT editor """
+
+
+from MonsterList import MONSTERS
+from support_functions import BLACK, RED, DIRECTIONS
+from support_functions import dec2hex_all, get_east, get_north
+
+
 class Statues:
+    """Class for implementing statues"""
+
     def __init__(self, filename):
+        """ Constructor """
+
         self.filename = filename
         self.statues = {
-            #Name , Monster Type (hex), Monster Type Dec, N coord HEX, E coord Hex, N coord Dec, E coord Dec, direction
+            #Name , Type (hex), Type (dec), N (hex), E (hex), N (dec), E (dec), direction
             0:  ["Statue 0", "00", "00", "00", "00", "00", "00", "0", "U"],
             1:  ["Statue 1", "00", "00", "00", "00", "00", "00", "0", "U"],
             2:  ["Statue 2", "00", "00", "00", "00", "00", "00", "0", "U"],
@@ -17,6 +29,8 @@ class Statues:
         }
 
     def write(self):
+        """ Write statues file """
+
         with open(self.filename, 'a') as outfile:
             for statue in self.statues.values():
                 outfile.write('\n')
@@ -42,126 +56,130 @@ class Statues:
                 outfile.write('          db  ')
                 outfile.write(f'{statue[3]},{statue[4]}')
 
-    def configure(self, x):
-        '''
-        print(x)
-        doneStatue = False
-        statueValue = 1
-        monsterValue = 1
+    def configure(self, inx, pglink):
+        """ Create statues """
+
+        def get_monster_index(inx, shift):
+            if inx + shift < 1:
+                result = len(MONSTERS)-1
+            elif inx + shift >= len(MONSTERS):
+                result = 1
+            else:
+                result = inx + shift
+
+            return result
+
+
+        pg = pglink['pg']
+        screen = pglink['screen']
+        font = pglink['font']
+        blank_box = pglink['blank_box']
+
+        print(inx)
+        statue_value = 1
+        monster_value = 1
         direction = 0
-        text = font.render(STATUES[statueValue][0], True, RED, BLACK)
+        text = font.render(self.statues[statue_value][0], True, RED, BLACK)
         blank_box(2)
         blank_box(4)
-        configText = font.render("Configure: "+str(STATUES[statueValue][0]), True, RED, BLACK)
-        screen.blit(configText, (1010, 256))
+        conf_text = font.render(f"Configure: {self.statues[statue_value][0]}", True, RED, BLACK)
+        screen.blit(conf_text, (1010, 256))
 
-        t0Text = font.render("Current Coords:", True, RED, BLACK)
-        screen.blit(t0Text, (1010, 305))
+        t0_text = font.render("Current Coords:", True, RED, BLACK)
+        screen.blit(t0_text, (1010, 305))
 
-        for inx, statue in STATUES.items():
+        for statue_inx, statue in self.statues.items():
+            s_text = font.render(f'Statue: {statue_inx}', True, RED, BLACK)
+            screen.blit(s_text, (1002, (280+(statue_inx*60))))
 
-            sText = font.render('Statue: '+str(inx), True, RED, BLACK)
             if statue[2] == '00':
-                tText = font.render("Unassigned", True, RED, BLACK)
+                t_text = font.render("Unassigned", True, RED, BLACK)
             else:
                 stat = statue[2]
-                tText = font.render(str(MONSTERS[stat][0]), True, RED, BLACK)
+                t_text = font.render(str(MONSTERS[stat][0]), True, RED, BLACK)
 
             if (statue[3] == '00' and statue[4] == '00'):
                 coords_txt = "Unassigned"
             else:
                 coords_txt = f"N: {statue[5]}  E: {statue[6]}  Faces: {statue[8]}"
 
-            tCoords = font.render(coords_txt, True, RED, BLACK)
+            t_coords = font.render(coords_txt, True, RED, BLACK)
 
-            screen.blit(sText, (1002, (280+(t*60))))
-            screen.blit(tText, (1002, (300+(t*60))))
-            screen.blit(tCoords, (1010, (320+(t*60))))
+            screen.blit(t_text, (1002, (300+(statue_inx*60))))
+            screen.blit(t_coords, (1010, (320+(statue_inx*60))))
 
-        while not doneStatue:
+        done_statue = False
+
+        while not done_statue:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
 
                     if event.key == pg.K_z:
-                        if statueValue == 1:
-                            statueValue = 10
+                        if statue_value == 1:
+                            statue_value = 10
                             blank_box(2)
                         else:
-                            statueValue -= 1
+                            statue_value -= 1
                     elif event.key == pg.K_x:
-                        if statueValue == 10:
-                            statueValue = 1
+                        if statue_value == 10:
+                            statue_value = 1
                             blank_box(2)
                         else:
-                            statueValue += 1
+                            statue_value += 1
                     elif event.key == pg.K_LEFT:
-                        if monsterValue == 1:
-                            monsterValue = 127
-                        else:
-                            monsterValue -= 1
+                        monster_value = get_monster_index(monster_value, -1)
                     elif event.key == pg.K_DOWN:
-                        if monsterValue < 11:
-                            monsterValue = 127
-                        else:
-                            monsterValue -= 10
+                        monster_value = get_monster_index(monster_value, -10)
                     elif event.key == pg.K_RIGHT:
-                        if monsterValue == 127:
-                            monsterValue = 1
-                        else:
-                            monsterValue += 1
+                        monster_value = get_monster_index(monster_value, 1)
                     elif event.key == pg.K_UP:
-                        if monsterValue > 117:
-                            monsterValue = 1
-                        else:
-                            monsterValue += 10
-                    elif event.key == pg.K_j:
+                        monster_value = get_monster_index(monster_value, 10)
+                    elif event.key == pg.K_j:   # anticlockwise
                         if direction == 0:
                             direction = 4
                         else:
                             direction -= 1
-                    elif event.key == pg.K_l:
+                    elif event.key == pg.K_l:   # clockwise
                         if direction == 4:
                             direction = 0
                             blank_box(4)
                         else:
                             direction += 1
-                    elif event.key == pg.K_c:
-                        # confirm
+                    elif event.key == pg.K_c:   # confirm
                         #update north coordinate
-                        STATUES[statueValue] = [
-                            STATUES[statueValue][0],
-                            MONSTERS[monsterValue][1],
-                            monsterValue,
-                            dec2hexAll(getNorth(x)),
-                            dec2hexAll(getEast(x)),
-                            getNorth(x),
-                            getEast(x),
+                        self.statues[statue_value] = [
+                            self.statues[statue_value][0],
+                            MONSTERS[monster_value][1],
+                            monster_value,
+                            dec2hex_all(get_north(inx)),
+                            dec2hex_all(get_east(inx)),
+                            get_north(inx),
+                            get_east(inx),
                             direction,
                             DIRECTIONS[direction]
                         ]
 
                         for inx in range(7):
-                            print(STATUES[statueValue][inx])
+                            print(self.statues[statue_value][inx])
 
-                        doneStatue = True
+                        done_statue = True
 
 
             blank_box(1)
-            text = font.render(str(MONSTERS[monsterValue][0]), True, RED, BLACK)
+            text = font.render(str(MONSTERS[monster_value][0]), True, RED, BLACK)
             screen.blit(text, (1020, 157))
-            configText = font.render("Configure: "+str(STATUES[statueValue][0]), True, RED, BLACK)
-            screen.blit(configText, (1010, 256))
+            conf_text = font.render(f"Configure: {self.statues[statue_value][0]}", True, RED, BLACK)
+            screen.blit(conf_text, (1010, 256))
             face = str(DIRECTIONS[direction])
-            directionText = font.render(face, True, RED, BLACK)
-            screen.blit(directionText, (1065, 210))
+            direction_text = font.render(face, True, RED, BLACK)
+            screen.blit(direction_text, (1065, 210))
             pg.display.update()
 
         blank_box(2)
         blank_box(3)
         blank_box(4)
-        configText = font.render("  City Editor", True, RED, BLACK)
-        screen.blit(configText, (1020, 256))
-        t0Text = font.render("Statue Updated", True, RED, BLACK)
-        screen.blit(t0Text, (1010, 305))
+        conf_text = font.render("  City Editor", True, RED, BLACK)
+        screen.blit(conf_text, (1020, 256))
+        t0_text = font.render("Statue Updated", True, RED, BLACK)
+        screen.blit(t0_text, (1010, 305))
         pg.display.update()
-        '''
