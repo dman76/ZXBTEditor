@@ -1,5 +1,16 @@
+""" Iron gates for BT editor """
+
+
+from support_functions import BLACK, RED, DIRECTIONS, DIRECTIONS_PARAM
+from support_functions import dec2hex_all, get_east, get_north
+
+
 class IronGates:
+    """ Class for implementing iron gates """
+
     def __init__(self, filename):
+        """ Constructor """
+
         self.filename = filename
         self.irongates = {
             #Name, N coord hex, E coord hex, N coord dec, E Coord dec, Direction, Direction display
@@ -10,7 +21,10 @@ class IronGates:
             4:  ["Iron Gate 4", "00", "00", "00", "00", "0", "U"]
         }
 
+
     def write(self):
+        """ Write gates file """
+
         with open(self.filename, 'a') as outfile:
             for gate in self.irongates.values():
                 outfile.write('          db  ')
@@ -20,49 +34,56 @@ class IronGates:
                 outfile.write(f'      ; {gate[0]} Coords + Direction')
                 outfile.write('\n')
 
-    def configure(self, x):
-        '''
-        print(x)
-        doneGate = False
-        gateValue = 1
+
+    def configure(self, inx, pglink):
+        """ Create gates """
+
+        pg = pglink['pg']
+        screen = pglink['screen']
+        font = pglink['font']
+        blank_box = pglink['blank_box']
+
+        print(inx)
+        gate_value = 1
         direction = 0
-        #text = font.render(IRONGATES[gateValue][0], True, RED, BLACK)
         blank_box(2)
         blank_box(4)
-        configText = font.render("Configure: "+str(IRONGATES[gateValue][0]), True, RED, BLACK)
-        screen.blit(configText, (1002, 256))
+        conf_text = font.render(f"Configure: {self.irongates[gate_value][0]}", True, RED, BLACK)
+        screen.blit(conf_text, (1002, 256))
 
-        t0Text = font.render("Current Coords:", True, RED, BLACK)
-        screen.blit(t0Text, (1010, 305))
+        t0_text = font.render("Current Coords:", True, RED, BLACK)
+        screen.blit(t0_text, (1010, 305))
 
-        for inx, gate in IRONGATES.items():
-            gText = font.render('Iron Gate: '+str(inx), True, RED, BLACK)
+        for gate_inx, gate in self.irongates.items():
+            g_text = font.render(f'Iron Gate: {gate_inx}', True, RED, BLACK)
+            screen.blit(g_text, (1002, (340+(gate_inx*60))))
 
             if (gate[3] == '00' and gate[4] == '00'):
                 coords_txt = "Unassigned"
             else:
                 coords_txt = f"N: {gate[3]}  E: {gate[4]}  Faces: {gate[6]}"
 
-            tCoords = font.render(coords_txt, RED, BLACK)
+            t_coords = font.render(coords_txt, RED, BLACK)
 
-            screen.blit(gText, (1002, (340+(inx*60))))
-            screen.blit(tCoords, (1010, (360+(inx*60))))
+            screen.blit(t_coords, (1010, (360+(gate_inx*60))))
 
-        while not doneGate:
+        done_gate = False
+
+        while not done_gate:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_z:
-                        if gateValue == 1:
-                            gateValue = 4
+                        if gate_value == 1:
+                            gate_value = 4
                             blank_box(2)
                         else:
-                            gateValue -= 1
+                            gate_value -= 1
                     elif event.key == pg.K_x:
-                        if gateValue == 4:
-                            gateValue = 1
+                        if gate_value == 4:
+                            gate_value = 1
                             blank_box(2)
                         else:
-                            gateValue += 1
+                            gate_value += 1
                     elif event.key == pg.K_j:
                         if direction == 0:
                             direction = 4
@@ -77,37 +98,37 @@ class IronGates:
                     elif event.key == pg.K_c:
                         # confirm
                         #update north coordinate
-                        IRONGATES[gateValue] = [
-                            IRONGATES[gateValue][0],
-                            dec2hexAll(getNorth(x)),
-                            dec2hexAll(getEast(x)),
-                            getNorth(x),
-                            getEast(x),
+                        self.irongates[gate_value] = [
+                            self.irongates[gate_value][0],
+                            dec2hex_all(get_north(inx)),
+                            dec2hex_all(get_east(inx)),
+                            get_north(inx),
+                            get_east(inx),
                             DIRECTIONS_PARAM[direction],
                             DIRECTIONS[direction]
                         ]
 
-                        for inx in range(7):
-                            print(IRONGATES[gateValue][inx])
+                        for gate_inx in range(7):
+                            print(self.irongates[gate_value][gate_inx])
 
-                        doneGate = True
+                        done_gate = True
+                        break
 
             blank_box(1)
             ##            text = font.render(str(MONSTERS[monsterValue][0]), True, RED, BLACK)
             ##            screen.blit(text, (1020, 157))
-            configText = font.render("Configure: "+str(IRONGATES[gateValue][0]), True, RED, BLACK)
-            screen.blit(configText, (1002, 256))
+            conf_text = font.render(f"Configure: {self.irongates[gate_value][0]}", True, RED, BLACK)
+            screen.blit(conf_text, (1002, 256))
             face = str(DIRECTIONS[direction])
-            directionText = font.render(face, True, RED, BLACK)
-            screen.blit(directionText, (1065, 210))
+            direction_text = font.render(face, True, RED, BLACK)
+            screen.blit(direction_text, (1065, 210))
             pg.display.update()
 
         blank_box(2)
         blank_box(3)
         blank_box(4)
-        configText = font.render("  City Editor", True, RED, BLACK)
-        screen.blit(configText, (1020, 256))
-        t0Text = font.render("Gate Updated", True, RED, BLACK)
-        screen.blit(t0Text, (1010, 305))
+        conf_text = font.render("  City Editor", True, RED, BLACK)
+        screen.blit(conf_text, (1020, 256))
+        t0_text = font.render("Gate Updated", True, RED, BLACK)
+        screen.blit(t0_text, (1010, 305))
         pg.display.update()
-        '''

@@ -429,22 +429,23 @@ def main():
                     else:
                         print("City Map will not pack!")
                 elif event.key == pg.K_c:
+                    pglink = {
+                        "pg": pg,
+                        "screen": screen,
+                        "font": font,
+                        "blank_box": blank_box
+                    }
+
                     # configurable properties
                     if city_out[pointer] == " 11h":
                         print('Tavern config')
-                        taverns.configure(pointer)
+                        taverns.configure(pointer, pglink)
                     elif city_out[pointer] == " 60h":
                         print('Statue config')
-                        statues.configure(pointer,
-                                          {"pg": pg,
-                                           "screen": screen,
-                                           "font": font,
-                                           "blank_box": blank_box
-                                          }
-                                         )
+                        statues.configure(pointer, pglink)
                     elif city_out[pointer] == " 68h":
                         print('Iron Gate config')
-                        irongates.configure(pointer)
+                        irongates.configure(pointer, pglink)
 
                 hotkeys = {
                     pg.K_0: 0,
