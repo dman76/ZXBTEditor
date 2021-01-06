@@ -300,6 +300,46 @@ def draw_boxes(scr):
         pg.draw.rect(screen, box[0], box[1])
 
 
+def menu():
+    #-------- Select Start Grid -------------
+
+    gridSelectText = font.render("Select Grid Type:", True, RED, BLACK)
+    gridBlankText = font.render("E)mpty Grid", True, RED, BLACK)
+    gridSkaraText = font.render("S)kara Brae", True, RED, BLACK)
+    gridWallsText = font.render("W)alled City", True, RED, BLACK)
+    gridLoadText = font.render("L)oad Previous", True, RED, BLACK)
+
+    screen.blit(gridSelectText, (300,10))
+    screen.blit(gridBlankText, (320,100))
+    screen.blit(gridSkaraText, (320,120))
+    screen.blit(gridWallsText, (320,140))
+    screen.blit(gridLoadText, (320,160))
+
+    pg.display.update()
+
+    doneSelect = False
+    sel = 0
+
+    while not doneSelect:
+        for event in pg.event.get():
+            if event.type == pg.KEYDOWN:
+                if event.key == pg.K_e:
+                    sel = 1
+                    doneSelect = True
+                if event.key == pg.K_s:
+                    sel = 2
+                    doneSelect = True
+                if event.key == pg.K_w:
+                    sel = 3
+                    doneSelect = True
+                if event.key == pg.K_l:
+                    sel = 4
+                    doneSelect = True
+        
+    
+    return sel
+
+
 def main():
     """ Main Program """
 
@@ -346,6 +386,11 @@ font = pg.font.Font('freesansbold.ttf', 16)
 text = font.render('     Blank     ', True, RED, BLACK)
 textX = font.render('E: '+str(east), True, RED, BLACK)
 textY = font.render('N: 29', True, RED, BLACK)
+
+# Run initial menu
+
+menu()
+pg.display.update()
 
 # text boxes init
 
