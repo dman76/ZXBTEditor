@@ -1,14 +1,19 @@
+import pygame as pg
+from blank_box import *
+from support_functions import *
+
 class IronGates:
     def __init__(self, filename):
         self.filename = filename
         self.irongates = {
             #Name, N coord hex, E coord hex, N coord dec, E Coord dec, Direction, Direction display
-            0:  ["Iron Gate 0", "00", "00", "00", "00", "0", "U"],
+            #0:  ["Iron Gate 0", "00", "00", "00", "00", "0", "U"],
             1:  ["Iron Gate 1", "00", "00", "00", "00", "0", "U"],
             2:  ["Iron Gate 2", "00", "00", "00", "00", "0", "U"],
             3:  ["Iron Gate 3", "00", "00", "00", "00", "0", "U"],
             4:  ["Iron Gate 4", "00", "00", "00", "00", "0", "U"]
         }
+
 
     def write(self):
         with open(self.filename, 'a') as outfile:
@@ -30,17 +35,17 @@ class IronGates:
         #text = font.render(IRONGATES[gateValue][0], True, RED, BLACK)
         blank_box(2)
         blank_box(4)
-        configText = font.render("Configure: "+str(IRONGATES[gateValue][0]), True, RED, BLACK)
+        configText = font.render("Configure: "+str(self.irongates[gateValue][0]), True, RED, BLACK)
         screen.blit(configText, (1002, 256))
         t0Text = font.render("Current Coords:", True, RED, BLACK)
         screen.blit(t0Text, (1010, 305))
-        for inx, gate in IRONGATES.items():
+        for inx, gate in self.irongates.items():
             gText = font.render('Iron Gate: '+str(inx), True, RED, BLACK)
             if (gate[3] == '00' and gate[4] == '00'):
                 coords_txt = "Unassigned"
             else:
                 coords_txt = f"N: {gate[3]}  E: {gate[4]}  Faces: {gate[6]}"
-            tCoords = font.render(coords_txt, RED, BLACK)
+            tCoords = font.render(coords_txt, True, RED, BLACK)
             screen.blit(gText, (1002, (340+(inx*60))))
             screen.blit(tCoords, (1010, (360+(inx*60))))
         while not doneGate:
@@ -72,8 +77,8 @@ class IronGates:
                     elif event.key == pg.K_c:
                         # confirm
                         #update north coordinate
-                        IRONGATES[gateValue] = [
-                            IRONGATES[gateValue][0],
+                        self.irongates[gateValue] = [
+                            self.irongates[gateValue][0],
                             dec2hexAll(getNorth(x)),
                             dec2hexAll(getEast(x)),
                             getNorth(x),
@@ -82,12 +87,12 @@ class IronGates:
                             DIRECTIONS[direction]
                         ]
                         for inx in range(7):
-                            print(IRONGATES[gateValue][inx])
+                            print(self.irongates[gateValue][inx])
                         doneGate = True
             blank_box(1)
             ##            text = font.render(str(MONSTERS[monsterValue][0]), True, RED, BLACK)
             ##            screen.blit(text, (1020, 157))
-            configText = font.render("Configure: "+str(IRONGATES[gateValue][0]), True, RED, BLACK)
+            configText = font.render("Configure: "+str(self.irongates[gateValue][0]), True, RED, BLACK)
             screen.blit(configText, (1002, 256))
             face = str(DIRECTIONS[direction])
             directionText = font.render(face, True, RED, BLACK)

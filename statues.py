@@ -1,9 +1,14 @@
+import pygame as pg
+from blank_box import *
+from support_functions import *
+from MonsterList import *
+
 class Statues:
     def __init__(self, filename):
         self.filename = filename
         self.statues = {
             #Name , Monster Type (hex), Monster Type Dec, N coord HEX, E coord Hex, N coord Dec, E coord Dec, direction
-            0:  ["Statue 0", "00", "00", "00", "00", "00", "00", "0", "U"],
+            #0:  ["Statue 0", "00", "00", "00", "00", "00", "00", "0", "U"],
             1:  ["Statue 1", "00", "00", "00", "00", "00", "00", "0", "U"],
             2:  ["Statue 2", "00", "00", "00", "00", "00", "00", "0", "U"],
             3:  ["Statue 3", "00", "00", "00", "00", "00", "00", "0", "U"],
@@ -50,14 +55,14 @@ class Statues:
         statueValue = 1
         monsterValue = 1
         direction = 0
-        text = font.render(STATUES[statueValue][0], True, RED, BLACK)
+        text = font.render(self.statues[statueValue][0], True, RED, BLACK)
         blank_box(2)
         blank_box(4)
-        configText = font.render("Configure: "+str(STATUES[statueValue][0]), True, RED, BLACK)
+        configText = font.render("Configure: "+str(self.statues[statueValue][0]), True, RED, BLACK)
         screen.blit(configText, (1010, 256))
         t0Text = font.render("Current Coords:", True, RED, BLACK)
         screen.blit(t0Text, (1010, 305))
-        for inx, statue in STATUES.items():
+        for inx, statue in self.statues.items():
             sText = font.render('Statue: '+str(inx), True, RED, BLACK)
             if statue[2] == '00':
                 tText = font.render("Unassigned", True, RED, BLACK)
@@ -69,9 +74,9 @@ class Statues:
             else:
                 coords_txt = f"N: {statue[5]}  E: {statue[6]}  Faces: {statue[8]}"
             tCoords = font.render(coords_txt, True, RED, BLACK)
-            screen.blit(sText, (1002, (280+(t*60))))
-            screen.blit(tText, (1002, (300+(t*60))))
-            screen.blit(tCoords, (1010, (320+(t*60))))
+            screen.blit(sText, (1002, (280+(inx*60))))
+            screen.blit(tText, (1002, (300+(inx*60))))
+            screen.blit(tCoords, (1010, (320+(inx*60))))
         while not doneStatue:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
@@ -121,8 +126,8 @@ class Statues:
                     elif event.key == pg.K_c:
                         # confirm
                         #update north coordinate
-                        STATUES[statueValue] = [
-                            STATUES[statueValue][0],
+                        self.statues[statueValue] = [
+                            self.statues[statueValue][0],
                             MONSTERS[monsterValue][1],
                             monsterValue,
                             dec2hexAll(getNorth(x)),
@@ -133,12 +138,12 @@ class Statues:
                             DIRECTIONS[direction]
                         ]
                         for inx in range(7):
-                            print(STATUES[statueValue][inx])
+                            print(self.statues[statueValue][inx])
                         doneStatue = True
             blank_box(1)
             text = font.render(str(MONSTERS[monsterValue][0]), True, RED, BLACK)
             screen.blit(text, (1020, 157))
-            configText = font.render("Configure: "+str(STATUES[statueValue][0]), True, RED, BLACK)
+            configText = font.render("Configure: "+str(self.statues[statueValue][0]), True, RED, BLACK)
             screen.blit(configText, (1010, 256))
             face = str(DIRECTIONS[direction])
             directionText = font.render(face, True, RED, BLACK)

@@ -1,9 +1,13 @@
+import pygame as pg
+from blank_box import *
+from support_functions import *
+
 class Taverns:
     def __init__(self, filename):
         self.filename = filename
         self.taverns = {
             #Name , output value, N coord HEX, E coord Hex, N coord Dec, E coord Dec
-            0:  ["Unnamed Tavern", "0", "00", "00", "00", "00"],
+            #0:  ["Unnamed Tavern", "0", "00", "00", "00", "00"],
             1:  [" Scarlet Bard", "44h", "00", "00", "00", "00"],
             2:  ["  Sinister Inn", "45h", "00", "00", "00", "00"],
             3:  ["Dragon's Breath", "46h", "00", "00", "00", "00"],
@@ -33,16 +37,18 @@ class Taverns:
     def configure(self, x):
         
         print(x)
+        font = pg.font.Font('freesansbold.ttf', 16)
         doneInn = False
-        innValue = 0
+        innValue = 1
         #innText = font.render(INNS[innValue][0], True, RED, BLACK)
-        text = font.render(INNS[innValue][0], True, RED, BLACK)
+        text = font.render(self.taverns[innValue][0], True, RED, BLACK)
         blank_box(2)
         configText = font.render("Configure Tavern", True, RED, BLACK)
         screen.blit(configText, (1020, 256))
         t0Text = font.render("Current Coords:", True, RED, BLACK)
-        screen.blit(t0Text, (1010, 305))
-        for inx, tavern in INNS.items():
+        screen.blit(t0Text, (1010, 310))
+        #for inx, tavern in INNS.items():
+        for inx, tavern in self.taverns.items():
             tText = font.render(f'{tavern[0]}', True, RED, BLACK)
             if (tavern[2] == '00' and tavern[3] == '00'):
                 coords_txt = "Unassigned"
@@ -55,29 +61,29 @@ class Taverns:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
                     if event.key == pg.K_z:
-                        if innValue == 0:
+                        if innValue == 1:
                             innValue = 7
                         else:
                             innValue -= 1
                     elif event.key == pg.K_x:
                         if innValue == 7:
-                            innValue = 0
+                            innValue = 1
                         else:
                             innValue += 1
                     elif event.key == pg.K_c:
                         # confirm
                         #update north coordinate
-                        if innValue != 0:   # Don't update coords for default tavern!
-                            INNS[innValue][2] = dec2hexAll(getNorth(x))
-                            INNS[innValue][3] = dec2hexAll(getEast(x))
-                            INNS[innValue][4] = getNorth(x)
-                            INNS[innValue][5] = getEast(x)
-                            print(INNS[innValue][0])
-                            print(INNS[innValue][2])
-                            print(INNS[innValue][3])
+                        #if innValue != 0:   # Don't update coords for default tavern!
+                        self.taverns[innValue][2] = dec2hexAll(getNorth(x))
+                        self.taverns[innValue][3] = dec2hexAll(getEast(x))
+                        self.taverns[innValue][4] = getNorth(x)
+                        self.taverns[innValue][5] = getEast(x)
+                        print(self.taverns[innValue][0])
+                        print(self.taverns[innValue][2])
+                        print(self.taverns[innValue][3])
                         doneInn = True
             blank_box(1)
-            text = font.render(INNS[innValue][0], True, RED, BLACK)
+            text = font.render(self.taverns[innValue][0], True, RED, BLACK)
             screen.blit(text, (1020, 157))
             pg.display.update()
         blank_box(2)
@@ -85,5 +91,5 @@ class Taverns:
         configText = font.render("  City Editor", True, RED, BLACK)
         screen.blit(configText, (1020, 256))
         t0Text = font.render("Tavern Updated", True, RED, BLACK)
-        screen.blit(t0Text, (1010, 305))
+        screen.blit(t0Text, (1010, 310))
         pg.display.update()

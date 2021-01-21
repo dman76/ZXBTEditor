@@ -1,3 +1,9 @@
+import pygame as pg
+import sys
+from blank_box import *
+CURRDIR = sys.path[0]
+DATADIR = CURRDIR + '\\data\\'
+
 # Define some colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -31,7 +37,7 @@ DIRECTIONS_PARAM = ['UNASSIGNED', 'FACE_NORTH', 'FACE_EAST', 'FACE_SOUTH', 'FACE
 
 def create_grid(size):
     return ["   0" for _ in range(size)]
-
+         
 
 def dec2hexAll(num):
     if num < 10:
@@ -56,6 +62,35 @@ def coordsInHex(num):
             return '0'+str("%X" % num)
         else:
             return "%X" % num
+
+def getNorth(num):
+    print(num)
+
+    if num == 0:
+        result = 29
+    else:
+        result = 29 - (num // 30)
+        print(result)
+
+    if result == 9:
+        blank_box(4)
+
+    return result
+
+
+def getEast(num):
+    print(num)
+
+    if num == 0:
+        result = 0
+    else:
+        result = num % 30
+        print(result)
+
+    if result == 9:
+        blank_box(4)
+
+    return result
 
 
 def diag(xcount, space_to_fill, space_left, add_count, last):

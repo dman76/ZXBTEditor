@@ -7,6 +7,7 @@ import sys
 
 import MonsterList
 from support_functions import *
+from blank_box import *
 from irongates import IronGates
 from statues import Statues
 from taverns import Taverns
@@ -33,6 +34,15 @@ with open(DATADIR+'E856-E87D_guardians.asm', 'w') as statueFile:
 with open(DATADIR+'constants_gates.asm', 'w') as ironGatesFile:
     pass
 
+with open(DATADIR+'new_city.city', 'w') as cityOutFile:
+    cityOutFile.write('\n')
+
+#with open(DATADIR+'skara.txt', 'r') as skaraFile:
+#    pass
+
+#with open(DATADIR+'walledCity.txt', 'r') as wallCityFile:
+#    pass
+
 
 def strip_from_sheet(src_sheet, start, size, columns, rows):
     frames = []
@@ -41,51 +51,6 @@ def strip_from_sheet(src_sheet, start, size, columns, rows):
             location = (start[0]+size[0]*i, start[1]+size[1]*j)
             frames.append(src_sheet.subsurface(pg.Rect(location, size)))
     return frames
-
-
-def getNorth(num):
-    print(num)
-
-    if num == 0:
-        result = 29
-    else:
-        result = 29 - (num // 30)
-        print(result)
-
-    if result == 9:
-        blank_box(4)
-
-    return result
-
-
-def getEast(num):
-    print(num)
-
-    if num == 0:
-        result = 0
-    else:
-        result = num % 30
-        print(result)
-
-    if result == 9:
-        blank_box(4)
-
-    return result
-
-
-def blank_box(selected):
-    boxes = {
-        0: (1013, 3, 132, 132),    # Blank Selected Building picture box
-        1: (981, 151, 198, 28),    # Blank Selected Text Box
-        2: (981, 251, 198, 28),    # Blank Secondary text  box
-        3: (981, 301, 198, 648),   # Blank long text information box
-        4: (1057, 197, 48, 40)     # Blank coordinates box
-    }
-
-    coords = boxes.get(selected, None)
-
-    if coords:
-        pg.draw.rect(screen, BLACK, coords)
 
 
 def pack_2():
@@ -261,6 +226,7 @@ def write_Out():
                         eightCount = 1
                     else:
                         myfile.write(',')
+                print('index=' + str(o))
                 myfile.write(str(CityPacked[o]))
                 if eightCount == 0:
                     eightCount = eightCount + 2
@@ -271,6 +237,20 @@ def write_Out():
     taverns.write()
     statues.write()
     irongates.write()
+
+
+def write_Map(CityOut):     
+# This function writes map for load/save format for editor rather than for z80 recompile
+        lineCount = 0
+        for x in range(900):
+            if lineCount == 30:
+                with open(DATADIR + 'new_city.city', 'a') as cityOutFile:
+                    cityOutFile.write('\n')
+                lineCount = 0
+            with open(DATADIR + 'new_city.city', 'a') as cityOutFile:
+                cityOutFile.write(str(CityOut[x])+',')
+            lineCount = lineCount + 1
+        
 
 
 def draw_boxes(scr):
@@ -487,9 +467,10 @@ while not done:
                 memNumber = len(CityPacked)
                 pack_2()
                 print(f"Number of items in the list = {len(CityPacked)}")
-                if memNumber < 687: # will pack ok
+                if memNumber < 690: # will pack ok
+                    write_Map(CityOut)
                     write_Out()
-                    find_Guild()
+                    find_Guild()                
                 else:
                     print("City Map will not pack!")
             elif event.key == pg.K_c:
