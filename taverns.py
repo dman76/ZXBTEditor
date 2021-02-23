@@ -7,7 +7,6 @@ class Taverns:
         self.filename = filename
         self.taverns = {
             #Name , output value, N coord HEX, E coord Hex, N coord Dec, E coord Dec
-            #0:  ["Unnamed Tavern", "0", "00", "00", "00", "00"],
             1:  [" Scarlet Bard", "44h", "00", "00", "00", "00"],
             2:  ["  Sinister Inn", "45h", "00", "00", "00", "00"],
             3:  ["Dragon's Breath", "46h", "00", "00", "00", "00"],
@@ -15,9 +14,14 @@ class Taverns:
             5:  [" Archmage Inn", "48h", "00", "00", "00", "00"],
             6:  [" Skull Tavern", "49h", "00", "00", "00", "00"],
             7:  [" Drawn Blade", "4Ah", "00", "00", "00", "00"]
-        }            
+        }
 
+    # Apply tavern data from saved file
+    def load_taverns(self,cityGrid):
+        for tavernNumber in range (1,8):
+            self.taverns[tavernNumber] = cityGrid[(tavernNumber+29)]
 
+    # Write output for z80 recompile
     def write(self):
         with open(self.filename, 'a') as outfile:
             for tavern in self.taverns.values():
@@ -33,6 +37,18 @@ class Taverns:
             outfile.write('\n')
             outfile.write('db 0FFh,0FFh,0')
 
+    # Write output for application save/load
+    def writeTavern(self):
+         with open(DATADIR+'new_city.city', 'a') as cityOutFile:
+            cityOutFile.write('\n')
+            for tavern in self.taverns.values():              
+                cityOutFile.write(f'{tavern[0]}, ')
+                cityOutFile.write(f'{tavern[1]}, ')
+                cityOutFile.write(f'{tavern[2]}, ')
+                cityOutFile.write(f'{tavern[3]}, ')
+                cityOutFile.write(f'{tavern[4]}, ')
+                cityOutFile.write(f'{tavern[5]}')
+                cityOutFile.write('\n')
 
     def configure(self, x):
         
@@ -40,14 +56,12 @@ class Taverns:
         font = pg.font.Font('freesansbold.ttf', 16)
         doneInn = False
         innValue = 1
-        #innText = font.render(INNS[innValue][0], True, RED, BLACK)
         text = font.render(self.taverns[innValue][0], True, RED, BLACK)
         blank_box(2)
         configText = font.render("Configure Tavern", True, RED, BLACK)
         screen.blit(configText, (1020, 256))
         t0Text = font.render("Current Coords:", True, RED, BLACK)
         screen.blit(t0Text, (1010, 310))
-        #for inx, tavern in INNS.items():
         for inx, tavern in self.taverns.items():
             tText = font.render(f'{tavern[0]}', True, RED, BLACK)
             if (tavern[2] == '00' and tavern[3] == '00'):

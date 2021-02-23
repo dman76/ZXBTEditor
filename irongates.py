@@ -14,7 +14,14 @@ class IronGates:
             4:  ["Iron Gate 4", "00", "00", "00", "00", "0", "U"]
         }
 
+    # Apply gate data from saved file
+    def load_gates(self,cityGrid):
+        for gateNumber in range (1,5):
+            print (gateNumber)
+            print (cityGrid[(gateNumber+36)])
+            self.irongates[gateNumber] = cityGrid[(gateNumber+36)]
 
+    # Write output for z80 recompile
     def write(self):
         with open(self.filename, 'a') as outfile:
             for gate in self.irongates.values():
@@ -25,6 +32,20 @@ class IronGates:
                 outfile.write(f'      ; {gate[0]} Coords + Direction')
                 outfile.write('\n')
 
+    # Write output for application save/load
+    def writeGates(self):
+        with open(DATADIR+'new_city.city', 'a') as cityOutFile:
+            for gate in self.irongates.values():
+                cityOutFile.write(f'{gate[0]}, ')
+                cityOutFile.write(f'{gate[1]}, ')
+                cityOutFile.write(f'{gate[2]}, ')
+                cityOutFile.write(f'{gate[3]}, ')
+                cityOutFile.write(f'{gate[4]}, ')
+                cityOutFile.write(f'{gate[5]}, ')
+                cityOutFile.write(f'{gate[6]}')
+                cityOutFile.write('\n')
+
+
     def configure(self, x):
         
         print(x)
@@ -32,7 +53,6 @@ class IronGates:
         doneGate = False
         gateValue = 1
         direction = 0
-        #text = font.render(IRONGATES[gateValue][0], True, RED, BLACK)
         blank_box(2)
         blank_box(4)
         configText = font.render("Configure: "+str(self.irongates[gateValue][0]), True, RED, BLACK)
@@ -90,8 +110,6 @@ class IronGates:
                             print(self.irongates[gateValue][inx])
                         doneGate = True
             blank_box(1)
-            ##            text = font.render(str(MONSTERS[monsterValue][0]), True, RED, BLACK)
-            ##            screen.blit(text, (1020, 157))
             configText = font.render("Configure: "+str(self.irongates[gateValue][0]), True, RED, BLACK)
             screen.blit(configText, (1002, 256))
             face = str(DIRECTIONS[direction])

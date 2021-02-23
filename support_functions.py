@@ -53,7 +53,6 @@ def dec2hexAll(num):
 
 
 def coordsInHex(num):
-    print('coords in hex: ' + str(num))
 
     if num < 10:
         return '0'+str(num)
@@ -64,13 +63,11 @@ def coordsInHex(num):
             return "%X" % num
 
 def getNorth(num):
-    print(num)
 
     if num == 0:
         result = 29
     else:
         result = 29 - (num // 30)
-        print(result)
 
     if result == 9:
         blank_box(4)
@@ -79,13 +76,11 @@ def getNorth(num):
 
 
 def getEast(num):
-    print(num)
 
     if num == 0:
         result = 0
     else:
         result = num % 30
-        print(result)
 
     if result == 9:
         blank_box(4)

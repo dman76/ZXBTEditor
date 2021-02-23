@@ -5,6 +5,7 @@ import pygame as pg
 #from pygame.locals import *
 import sys
 
+
 import MonsterList
 from support_functions import *
 from blank_box import *
@@ -34,14 +35,6 @@ with open(DATADIR+'E856-E87D_guardians.asm', 'w') as statueFile:
 with open(DATADIR+'constants_gates.asm', 'w') as ironGatesFile:
     pass
 
-with open(DATADIR+'new_city.city', 'w') as cityOutFile:
-    cityOutFile.write('\n')
-
-#with open(DATADIR+'skara.txt', 'r') as skaraFile:
-#    pass
-
-#with open(DATADIR+'walledCity.txt', 'r') as wallCityFile:
-#    pass
 
 
 def strip_from_sheet(src_sheet, start, size, columns, rows):
@@ -129,7 +122,7 @@ def pack_2():
                             with open('diagnost.txt', 'a') as outfile:
                                 outfile.write('\n')
                                 outfile.write("---packed exactly---")
-                        elif cCount > 30:                     # strip 30 off and continue
+                        if cCount > 30:                     # strip 30 off and continue
                             CityPacked.append("0FCh")
                             CityPacked.append(" 1Eh")
                             CityPacked.append(last)
@@ -140,7 +133,7 @@ def pack_2():
                             diag(xcount, spaceToFill, spaceLeft, addCount, last)
                             print("*NP >30: Space Left = ", spaceLeft)
                             print("Space to fill with packing: ", spaceToFill)
-                        elif cCount > 3:
+                        if cCount > 3:
                             CityPacked.append("0FCh")
                             CityPacked.append(str(dec2hexAll(cCount)))
                             CityPacked.append(last)
@@ -207,7 +200,7 @@ def write_Out():
         myfile.write('\n')
         myfile.write('CITY_MAP_DATA:  db ')
         for o in range(690):
-            print("index: " + str(o))
+            
             if eightCount == 33:
                 myfile.write('; '+ str(dec2hexAll(hexCount)))
                 hexCount = hexCount + 32
@@ -226,13 +219,15 @@ def write_Out():
                         eightCount = 1
                     else:
                         myfile.write(',')
-                print('index=' + str(o))
+                #print('index=' + str(o))
                 myfile.write(str(CityPacked[o]))
                 if eightCount == 0:
                     eightCount = eightCount + 2
                 else:
                     eightCount = eightCount + 1
 
+    myfile.close()
+    
     # Write Tavern & Statue Coords
     taverns.write()
     statues.write()
@@ -241,16 +236,21 @@ def write_Out():
 
 def write_Map(CityOut):     
 # This function writes map for load/save format for editor rather than for z80 recompile
+    with open(DATADIR+'new_city.city', 'w') as cityOutFile:
         lineCount = 0
         for x in range(900):
             if lineCount == 30:
-                with open(DATADIR + 'new_city.city', 'a') as cityOutFile:
-                    cityOutFile.write('\n')
+                cityOutFile.write('\n')
                 lineCount = 0
-            with open(DATADIR + 'new_city.city', 'a') as cityOutFile:
+            if lineCount == 29:
+                cityOutFile.write(str(CityOut[x]))
+            else:
                 cityOutFile.write(str(CityOut[x])+',')
             lineCount = lineCount + 1
-        
+    taverns.writeTavern()
+    irongates.writeGates()
+    statues.writeStatues()
+    cityOutFile.close()
 
 
 def draw_boxes(scr):
@@ -280,45 +280,73 @@ def draw_boxes(scr):
         pg.draw.rect(screen, box[0], box[1])
 
 
-def menu():
-    #-------- Select Start Grid -------------
 
-    gridSelectText = font.render("Select Grid Type:", True, RED, BLACK)
-    gridBlankText = font.render("E)mpty Grid", True, RED, BLACK)
-    gridSkaraText = font.render("S)kara Brae", True, RED, BLACK)
-    gridWallsText = font.render("W)alled City", True, RED, BLACK)
-    gridLoadText = font.render("L)oad Previous", True, RED, BLACK)
 
-    screen.blit(gridSelectText, (300,10))
-    screen.blit(gridBlankText, (320,100))
-    screen.blit(gridSkaraText, (320,120))
-    screen.blit(gridWallsText, (320,140))
-    screen.blit(gridLoadText, (320,160))
+def saved_grid_to_list():
+    savedCityData = []
+    if sel == 1:            #empty grid
+        with open(DATADIR+'blankMap.city', 'r') as blankCity:
+            for lines in blankCity:
+                element_list = [elt.strip() for elt in lines.split(',')]
+                savedCityData.append(element_list)
+    if sel == 2:            #walled city
+        with open(DATADIR+'walledCity.city', 'r') as wallCity:
+            for lines in wallCity:
+                element_list = [elt.strip() for elt in lines.split(',')]
+                savedCityData.append(element_list)
+    if sel == 3:            #Skara Brae
+        with open(DATADIR+'Skara_Brae.city', 'r') as SkaraCity:
+            for lines in SkaraCity:
+                element_list = [elt.strip() for elt in lines.split(',')]
+                savedCityData.append(element_list)
+    if sel == 4:            #Restore previously saved City
+        with open(DATADIR+'new_city.city', newline='') as prev_City:
+            for lines in prev_City:
+                element_list = [elt.strip() for elt in lines.split(',')]
+                savedCityData.append(element_list)
+                
+    return savedCityData
 
-    pg.display.update()
-
-    doneSelect = False
-    sel = 0
-
-    while not doneSelect:
-        for event in pg.event.get():
-            if event.type == pg.KEYDOWN:
-                if event.key == pg.K_e:
-                    sel = 1
-                    doneSelect = True
-                if event.key == pg.K_s:
-                    sel = 2
-                    doneSelect = True
-                if event.key == pg.K_w:
-                    sel = 3
-                    doneSelect = True
-                if event.key == pg.K_l:
-                    sel = 4
-                    doneSelect = True
-        
+def map_to_display(mS):
+    square_as_int = 0
+    mapSquare = ""
+    mapSquare = mS.strip()
     
-    return sel
-
+    if mapSquare == "0":
+        square_as_int = 0
+    if mapSquare == "1":
+        square_as_int = 1
+    if mapSquare == "9":
+        square_as_int = 2
+    if mapSquare == "19h":
+        square_as_int = 3
+    if mapSquare == "29h":
+        square_as_int = 4
+    if mapSquare == "11h":
+        square_as_int = 5
+    if mapSquare == "0A8h":
+        square_as_int = 6
+    if mapSquare == "21h":
+        square_as_int = 7
+    if mapSquare == "89h":
+        square_as_int = 8
+    if mapSquare == "60h":
+        square_as_int = 9
+    if mapSquare == "68h":
+        square_as_int = 10
+    if mapSquare == "71h":
+        square_as_int = 11
+    if mapSquare == "99h":
+        square_as_int = 12
+    if mapSquare == "91h":
+        square_as_int = 13
+    if mapSquare == "0A1h":
+        square_as_int = 14
+    if mapSquare == "78h":
+        square_as_int = 15
+    
+    return square_as_int
+         
 
 def main():
     """ Main Program """
@@ -367,9 +395,43 @@ text = font.render('     Blank     ', True, RED, BLACK)
 textX = font.render('E: '+str(east), True, RED, BLACK)
 textY = font.render('N: 29', True, RED, BLACK)
 
-# Run initial menu
+# initial menu
+#-------- Select Start Grid -------------
 
-menu()
+gridSelectText = font.render("Select Grid Type:", True, RED, BLACK)
+gridBlankText = font.render("E)mpty Grid", True, RED, BLACK)
+gridSkaraText = font.render("S)kara Brae", True, RED, BLACK)
+gridWallsText = font.render("W)alled City", True, RED, BLACK)
+gridLoadText = font.render("L)oad Previous", True, RED, BLACK)
+
+screen.blit(gridSelectText, (300,10))
+screen.blit(gridBlankText, (320,100))
+screen.blit(gridSkaraText, (320,120))
+screen.blit(gridWallsText, (320,140))
+screen.blit(gridLoadText, (320,160))
+
+pg.display.update()
+
+doneSelect = False
+sel = 0
+
+while not doneSelect:
+    for event in pg.event.get():
+        if event.type == pg.KEYDOWN:
+            if event.key == pg.K_e:
+                sel = 1
+                doneSelect = True
+            if event.key == pg.K_w:
+                sel = 2
+                doneSelect = True
+            if event.key == pg.K_s:
+                sel = 3
+                doneSelect = True
+            if event.key == pg.K_l:
+                sel = 4
+                doneSelect = True
+
+
 pg.display.update()
 
 # text boxes init
@@ -380,16 +442,43 @@ draw_boxes(screen)
 configText = font.render("  City Editor", True, RED, BLACK)
 screen.blit(configText, (1020, 256))
 
+
+
+#Draw grid based on selected type
+
+cityGrid = saved_grid_to_list()
+print (cityGrid)
+
+n = 0    
+##if sel == 1:
+##    for a in range(30):
+##        for b in range(30):
+##            screen.blit(city[0], ((a*32), (b*32)))
+
+#if sel > 1:
+for y in range(30):
+    rowElements = cityGrid[y]
+   
+    for x in range(30):
+
+        map_element = map_to_display(rowElements[x])
+        CityOut[n] = BLOCKS[map_element][1]
+        
+        screen.blit(city[map_element], ((x*32), (y*32)))
+        CityDisplay[n] = map_element
+        n = n + 1
+
+
 statues = Statues(DATADIR+'E856-E87D_guardians.asm')
 irongates = IronGates(DATADIR+'constants_gates.asm')
 taverns = Taverns(DATADIR+'E8DE-E8F5_inns_data.asm')
 
-#Draw initial blank grid
+taverns.load_taverns(cityGrid)
+statues.load_statues(cityGrid)
+irongates.load_gates(cityGrid)
 
-for a in range(30):
-    for b in range(30):
-        screen.blit(city[0], ((a*32), (b*32)))
 pg.display.update()
+
 
 #Loop until the user clicks the close button.
 done = False
@@ -402,7 +491,6 @@ while not done:
             break
 
         screen.blit(cityBig[selectedBlock], (selectX, selectY))
-        #display_surface.blit(text, textRect)
         blank_box(1)
         screen.blit(text, (1020, 156))
         screen.blit(city[selectedBlock], (XPos, YPos))
@@ -459,7 +547,6 @@ while not done:
                 CityDisplay[Pointer] = selectedBlock
                 CityOut[Pointer] = outValue
             elif event.key == pg.K_x:
-                print(f'CityOut 0:{CityOut[0]}')
                 CityPacked = []
                 # end 64152
                 # start 63466
@@ -468,9 +555,10 @@ while not done:
                 pack_2()
                 print(f"Number of items in the list = {len(CityPacked)}")
                 if memNumber < 690: # will pack ok
-                    write_Map(CityOut)
+                    #city_io.write_Map()
                     write_Out()
-                    find_Guild()                
+                    find_Guild()
+                    write_Map(CityOut)
                 else:
                     print("City Map will not pack!")
             elif event.key == pg.K_c:

@@ -21,6 +21,12 @@ class Statues:
             10:  ["Statue 10", "00", "00", "00", "00", "00", "00", "0", "U"]
         }
 
+    # Apply statue data from saved file
+    def load_statues(self,cityGrid):
+        for statueNumber in range (1,11):
+            self.statues[statueNumber] = cityGrid[(statueNumber+40)]
+
+    # Write output for z80 recompile
     def write(self):
         with open(self.filename, 'a') as outfile:
             for statue in self.statues.values():
@@ -47,9 +53,25 @@ class Statues:
                 outfile.write('          db  ')
                 outfile.write(f'{statue[3]},{statue[4]}')
 
+
+# Write output for application save/load
+    def writeStatues(self):
+         with open(DATADIR+'new_city.city', 'a') as cityOutFile:
+            for statue in self.statues.values():
+                cityOutFile.write(f'{statue[0]}, ')
+                cityOutFile.write(f'{statue[1]}, ')
+                cityOutFile.write(f'{statue[2]}, ')
+                cityOutFile.write(f'{statue[3]}, ')
+                cityOutFile.write(f'{statue[4]}, ')
+                cityOutFile.write(f'{statue[5]}, ')
+                cityOutFile.write(f'{statue[6]}, ')
+                cityOutFile.write(f'{statue[7]}, ')
+                cityOutFile.write(f'{statue[8]}')
+                cityOutFile.write('\n')
+
+
     def configure(self, x):
         
-        print(x)
         font = pg.font.Font('freesansbold.ttf', 16)
         doneStatue = False
         statueValue = 1
@@ -67,7 +89,7 @@ class Statues:
             if statue[2] == '00':
                 tText = font.render("Unassigned", True, RED, BLACK)
             else:
-                stat = statue[2]
+                stat = int(statue[2])
                 tText = font.render(str(MONSTERS[stat][0]), True, RED, BLACK)
             if (statue[3] == '00' and statue[4] == '00'):
                 coords_txt = "Unassigned"
