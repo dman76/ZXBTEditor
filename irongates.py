@@ -14,46 +14,51 @@ class IronGates:
             4:  ["Iron Gate 4", "00", "00", "00", "00", "0", "U"]
         }
 
+    # Apply gate data from saved file
     def load_gates(self,cityGrid):
-        ''' Apply gate data from saved file '''
+        for gateNumber in range (1,5):
+            print (gateNumber)
+            print (cityGrid[(gateNumber+36)])
+            self.irongates[gateNumber] = cityGrid[(gateNumber+36)]
 
-        for gate in self.irongates:
-            print(gate)
-            print(cityGrid[(gate+36)])
-            self.irongates[gate] = cityGrid[gate+36]    # ??? what is magic number 36 ???
-
+    # Write output for z80 recompile
     def write(self):
-        ''' Write output for z80 recompile '''
-
         with open(self.filename, 'a') as outfile:
             for gate in self.irongates.values():
-                txt = f'\tdb  {gate[1]}, {gate[2]}, {gate[5]}\t; {gate[0]} Coords + Direction\n'
-                outfile.write(txt)
+                outfile.write('          db  ')
+                outfile.write(f'{gate[1]}, ')
+                outfile.write(f'{gate[2]}, ')
+                outfile.write(f'{gate[5]}')
+                outfile.write(f'      ; {gate[0]} Coords + Direction')
+                outfile.write('\n')
 
+    # Write output for application save/load
     def writeGates(self):
-        ''' Write output for application save/load '''
-
         with open(DATADIR+'new_city.city', 'a') as cityOutFile:
             for gate in self.irongates.values():
-                gate_data = ', '.join(gate)
-                cityOutFile.write(f'{gate_data}\n')
+                cityOutFile.write(f'{gate[0]}, ')
+                cityOutFile.write(f'{gate[1]}, ')
+                cityOutFile.write(f'{gate[2]}, ')
+                cityOutFile.write(f'{gate[3]}, ')
+                cityOutFile.write(f'{gate[4]}, ')
+                cityOutFile.write(f'{gate[5]}, ')
+                cityOutFile.write(f'{gate[6]}')
+                cityOutFile.write('\n')
+
 
     def configure(self, x):
+        
         print(x)
-
         font = pg.font.Font('freesansbold.ttf', 16)
         doneGate = False
         gateValue = 1
         direction = 0
         blank_box(2)
         blank_box(4)
-
         configText = font.render("Configure: "+str(self.irongates[gateValue][0]), True, RED, BLACK)
         screen.blit(configText, (1002, 256))
-
         t0Text = font.render("Current Coords:", True, RED, BLACK)
         screen.blit(t0Text, (1010, 305))
-
         for inx, gate in self.irongates.items():
             gText = font.render('Iron Gate: '+str(inx), True, RED, BLACK)
             if (gate[3] == '00' and gate[4] == '00'):
@@ -63,7 +68,6 @@ class IronGates:
             tCoords = font.render(coords_txt, True, RED, BLACK)
             screen.blit(gText, (1002, (340+(inx*60))))
             screen.blit(tCoords, (1010, (360+(inx*60))))
-
         while not doneGate:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
@@ -106,24 +110,17 @@ class IronGates:
                             print(self.irongates[gateValue][inx])
                         doneGate = True
             blank_box(1)
-
             configText = font.render("Configure: "+str(self.irongates[gateValue][0]), True, RED, BLACK)
             screen.blit(configText, (1002, 256))
-
             face = str(DIRECTIONS[direction])
             directionText = font.render(face, True, RED, BLACK)
             screen.blit(directionText, (1065, 210))
-
             pg.display.update()
-
         blank_box(2)
         blank_box(3)
         blank_box(4)
-
         configText = font.render("  City Editor", True, RED, BLACK)
         screen.blit(configText, (1020, 256))
-
         t0Text = font.render("Gate Updated", True, RED, BLACK)
         screen.blit(t0Text, (1010, 305))
-
         pg.display.update()
