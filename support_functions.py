@@ -1,6 +1,12 @@
-import pygame as pg
+# -*- coding: utf-8 -*-
+
 import sys
+
+import pygame as pg
+
 from blank_box import *
+
+
 CURRDIR = sys.path[0]
 DATADIR = CURRDIR + '\\data\\'
 
@@ -37,37 +43,18 @@ DIRECTIONS_PARAM = ['UNASSIGNED', 'FACE_NORTH', 'FACE_EAST', 'FACE_SOUTH', 'FACE
 
 def create_grid(size):
     return ["   0" for _ in range(size)]
-         
+
 
 def dec2hexAll(num):
-    if num < 10:
-        return '   '+str(num)
-    else:
-        if num > 9 and num < 16:
-            return ' 0'+("%X" % num)+'h'
-        else:
-            if num > 159:
-                return '0'+("%X" % num)+'h'
-            else:
-                return ' '+("%X" % num)+'h'
+    return f" #{num:02X}"
 
 
 def coordsInHex(num):
+    return f"{num:02X}"
 
-    if num < 10:
-        return '0'+str(num)
-    else:
-        if num > 9 and num < 16:
-            return '0'+str("%X" % num)
-        else:
-            return "%X" % num
 
 def getNorth(num):
-
-    if num == 0:
-        result = 29
-    else:
-        result = 29 - (num // 30)
+    result = 29 if num == 0 else 29 - (num // 30)
 
     if result == 9:
         blank_box(4)
@@ -76,11 +63,7 @@ def getNorth(num):
 
 
 def getEast(num):
-
-    if num == 0:
-        result = 0
-    else:
-        result = num % 30
+    result = num % 30
 
     if result == 9:
         blank_box(4)
