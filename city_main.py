@@ -219,7 +219,7 @@ def write_Out():
                         eightCount = 1
                     else:
                         myfile.write(',')
-                #print('index=' + str(o))
+                
                 myfile.write(str(CityPacked[o]))
                 if eightCount == 0:
                     eightCount = eightCount + 2
@@ -284,69 +284,49 @@ def draw_boxes(scr):
 
 def saved_grid_to_list():
     savedCityData = []
-    if sel == 1:            #empty grid
-        with open(DATADIR+'blankMap.city', 'r') as blankCity:
-            for lines in blankCity:
+
+    CITIES = {
+        1: 'blankMap.city',
+        2: 'walledCity.city',
+        3: 'Skara_Brae.city',
+        4: 'new_city.city'
+        }
+
+    cityname = CITIES.get(sel, None)
+
+    if cityname:
+        with open(DATADIR+cityname, 'r') as grid_city:
+           for lines in grid_city:
                 element_list = [elt.strip() for elt in lines.split(',')]
                 savedCityData.append(element_list)
-    if sel == 2:            #walled city
-        with open(DATADIR+'walledCity.city', 'r') as wallCity:
-            for lines in wallCity:
-                element_list = [elt.strip() for elt in lines.split(',')]
-                savedCityData.append(element_list)
-    if sel == 3:            #Skara Brae
-        with open(DATADIR+'Skara_Brae.city', 'r') as SkaraCity:
-            for lines in SkaraCity:
-                element_list = [elt.strip() for elt in lines.split(',')]
-                savedCityData.append(element_list)
-    if sel == 4:            #Restore previously saved City
-        with open(DATADIR+'new_city.city', newline='') as prev_City:
-            for lines in prev_City:
-                element_list = [elt.strip() for elt in lines.split(',')]
-                savedCityData.append(element_list)
+
                 
     return savedCityData
 
 def map_to_display(mS):
-    square_as_int = 0
-    mapSquare = ""
+
     mapSquare = mS.strip()
+
+    SQUARES = {
+        "0": 0,
+        "1": 1,
+        "9": 2,
+        "19h" : 3,
+        "29h" : 4,
+        "11h" : 5,
+        "0A8h": 6,
+        "21h" : 7,
+        "89h" : 8,
+        "60h" : 9,
+        "68h" : 10,
+        "71h" : 11,
+        "99h" : 12,
+        "91h" : 13,
+        "0A1h": 14,
+        "78h" : 15
+        }
     
-    if mapSquare == "0":
-        square_as_int = 0
-    if mapSquare == "1":
-        square_as_int = 1
-    if mapSquare == "9":
-        square_as_int = 2
-    if mapSquare == "19h":
-        square_as_int = 3
-    if mapSquare == "29h":
-        square_as_int = 4
-    if mapSquare == "11h":
-        square_as_int = 5
-    if mapSquare == "0A8h":
-        square_as_int = 6
-    if mapSquare == "21h":
-        square_as_int = 7
-    if mapSquare == "89h":
-        square_as_int = 8
-    if mapSquare == "60h":
-        square_as_int = 9
-    if mapSquare == "68h":
-        square_as_int = 10
-    if mapSquare == "71h":
-        square_as_int = 11
-    if mapSquare == "99h":
-        square_as_int = 12
-    if mapSquare == "91h":
-        square_as_int = 13
-    if mapSquare == "0A1h":
-        square_as_int = 14
-    if mapSquare == "78h":
-        square_as_int = 15
-    
-    return square_as_int
-         
+    return SQUARES.get(mapSquare, 0)   
 
 def main():
     """ Main Program """
@@ -450,12 +430,7 @@ cityGrid = saved_grid_to_list()
 print (cityGrid)
 
 n = 0    
-##if sel == 1:
-##    for a in range(30):
-##        for b in range(30):
-##            screen.blit(city[0], ((a*32), (b*32)))
 
-#if sel > 1:
 for y in range(30):
     rowElements = cityGrid[y]
    
