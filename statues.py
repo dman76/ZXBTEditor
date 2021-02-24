@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
+
+
 import pygame as pg
+
 from blank_box import *
-from support_functions import *
 from MonsterList import *
+from support_functions import *
+
 
 class Statues:
     def __init__(self, filename):
@@ -21,57 +26,39 @@ class Statues:
             10:  ["Statue 10", "00", "00", "00", "00", "00", "00", "0", "U"]
         }
 
-    # Apply statue data from saved file
-    def load_statues(self,cityGrid):
-        for statueNumber in range (1,11):
-            self.statues[statueNumber] = cityGrid[(statueNumber+40)]
 
-    # Write output for z80 recompile
+    def load_statues(self,cityGrid):
+        ''' Apply statue data from saved file '''
+
+        for statue in self.statues:
+            self.statues[statue] = cityGrid[(statue+40)]    # ??? what is magic number 40 ???
+
+
     def write(self):
+        ''' Write output for z80 recompile '''
+
         with open(self.filename, 'a') as outfile:
             for statue in self.statues.values():
-                outfile.write('\n')
-                outfile.write('          db    ')
-                outfile.write(f'{statue[7]}')
+                outfile.write(f'\n\tdb {statue[7]}')
 
-            outfile.write('\n')
-            outfile.write('\n')
-            outfile.write('GUARDIANS:')
+            outfile.write('\n\nGUARDIANS:')
 
             for statue in self.statues.values():
-                outfile.write('\n')
-                outfile.write('          db  ')
-                outfile.write(f'{statue[1]}')
-                outfile.write('h')
+                outfile.write(f'\n\tdb #{statue[1]}')
 
-            outfile.write('\n')
-            outfile.write('\n')
-            outfile.write('GUARDIAN_COORDS:')
+            outfile.write('\n\nGUARDIAN_COORDS:')
 
             for statue in self.statues.values():
-                outfile.write('\n')
-                outfile.write('          db  ')
-                outfile.write(f'{statue[3]},{statue[4]}')
+                outfile.write(f'\n\tdb {statue[3]}, {statue[4]}')
 
 
-# Write output for application save/load
     def writeStatues(self):
-         with open(DATADIR+'new_city.city', 'a') as cityOutFile:
-            for statue in self.statues.values():
-                cityOutFile.write(f'{statue[0]}, ')
-                cityOutFile.write(f'{statue[1]}, ')
-                cityOutFile.write(f'{statue[2]}, ')
-                cityOutFile.write(f'{statue[3]}, ')
-                cityOutFile.write(f'{statue[4]}, ')
-                cityOutFile.write(f'{statue[5]}, ')
-                cityOutFile.write(f'{statue[6]}, ')
-                cityOutFile.write(f'{statue[7]}, ')
-                cityOutFile.write(f'{statue[8]}')
-                cityOutFile.write('\n')
+        ''' Write output for application save/load '''
+
+        dump_data(DATADIR+'new_city.city', self.statues)
 
 
     def configure(self, x):
-        
         font = pg.font.Font('freesansbold.ttf', 16)
         doneStatue = False
         statueValue = 1
@@ -80,10 +67,13 @@ class Statues:
         text = font.render(self.statues[statueValue][0], True, RED, BLACK)
         blank_box(2)
         blank_box(4)
+
         configText = font.render("Configure: "+str(self.statues[statueValue][0]), True, RED, BLACK)
         screen.blit(configText, (1010, 256))
+
         t0Text = font.render("Current Coords:", True, RED, BLACK)
         screen.blit(t0Text, (1010, 305))
+
         for inx, statue in self.statues.items():
             sText = font.render('Statue: '+str(inx), True, RED, BLACK)
             if statue[2] == '00':
@@ -99,6 +89,7 @@ class Statues:
             screen.blit(sText, (1002, (280+(inx*60))))
             screen.blit(tText, (1002, (300+(inx*60))))
             screen.blit(tCoords, (1010, (320+(inx*60))))
+
         while not doneStatue:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
@@ -159,9 +150,12 @@ class Statues:
                             direction,
                             DIRECTIONS[direction]
                         ]
+
                         for inx in range(7):
                             print(self.statues[statueValue][inx])
+
                         doneStatue = True
+
             blank_box(1)
             text = font.render(str(MONSTERS[monsterValue][0]), True, RED, BLACK)
             screen.blit(text, (1020, 157))
@@ -171,11 +165,15 @@ class Statues:
             directionText = font.render(face, True, RED, BLACK)
             screen.blit(directionText, (1065, 210))
             pg.display.update()
+
         blank_box(2)
         blank_box(3)
         blank_box(4)
+
         configText = font.render("  City Editor", True, RED, BLACK)
         screen.blit(configText, (1020, 256))
+
         t0Text = font.render("Statue Updated", True, RED, BLACK)
         screen.blit(t0Text, (1010, 305))
+
         pg.display.update()

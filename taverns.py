@@ -1,6 +1,10 @@
+# -*- coding: utf-8 -*-
+ 
 import pygame as pg
+
 from blank_box import *
 from support_functions import *
+
 
 class Taverns:
     def __init__(self, filename):
@@ -16,52 +20,46 @@ class Taverns:
             7:  [" Drawn Blade", "4Ah", "00", "00", "00", "00"]
         }
 
-    # Apply tavern data from saved file
     def load_taverns(self,cityGrid):
-        for tavernNumber in range (1,8):
-            self.taverns[tavernNumber] = cityGrid[(tavernNumber+29)]
+        ''' Apply tavern data from saved file '''
 
-    # Write output for z80 recompile
+        for tavern in self.taverns:
+            self.taverns[tavern] = cityGrid[(tavern+29)]    # ??? what is magic number 29 ???
+
+
     def write(self):
+        ''' Write output for z80 recompile '''
+
         with open(self.filename, 'a') as outfile:
             for tavern in self.taverns.values():
-                outfile.write('db  ')
-                outfile.write(f'{tavern[2]}, ')
-                outfile.write(f'{tavern[3]}, ')
-                outfile.write(f'{tavern[1]}')
-                outfile.write(f'      ; {tavern[0]} Coords + Identifier')
-                outfile.write('\n')
+                txt = f'\tdb {tavern[2]}, {tavern[3]}, {tavern[1]}\t; {tavern[0]} Coords + Id\n'
+                outfile.write(txt)
 
-            outfile.write('\n')
-            outfile.write('default_inn:')
-            outfile.write('\n')
-            outfile.write('db 0FFh,0FFh,0')
+            outfile.write('\ndefault_inn:')
+            outfile.write('\n\tdb #FF, #FF, 0')
 
-    # Write output for application save/load
+
     def writeTavern(self):
-         with open(DATADIR+'new_city.city', 'a') as cityOutFile:
-            cityOutFile.write('\n')
-            for tavern in self.taverns.values():              
-                cityOutFile.write(f'{tavern[0]}, ')
-                cityOutFile.write(f'{tavern[1]}, ')
-                cityOutFile.write(f'{tavern[2]}, ')
-                cityOutFile.write(f'{tavern[3]}, ')
-                cityOutFile.write(f'{tavern[4]}, ')
-                cityOutFile.write(f'{tavern[5]}')
-                cityOutFile.write('\n')
+        ''' Write output for application save/load '''
+
+        dump_data(DATADIR+'new_city.city', self.taverns)
+
 
     def configure(self, x):
-        
         print(x)
+
         font = pg.font.Font('freesansbold.ttf', 16)
         doneInn = False
         innValue = 1
         text = font.render(self.taverns[innValue][0], True, RED, BLACK)
         blank_box(2)
+
         configText = font.render("Configure Tavern", True, RED, BLACK)
         screen.blit(configText, (1020, 256))
+
         t0Text = font.render("Current Coords:", True, RED, BLACK)
         screen.blit(t0Text, (1010, 310))
+
         for inx, tavern in self.taverns.items():
             tText = font.render(f'{tavern[0]}', True, RED, BLACK)
             if (tavern[2] == '00' and tavern[3] == '00'):
@@ -71,6 +69,7 @@ class Taverns:
             tCoords = font.render(coords_txt, True, RED, BLACK)
             screen.blit(tText, (1002, (300+(inx*50))))
             screen.blit(tCoords, (1010, (320+(inx*50))))
+
         while not doneInn:
             for event in pg.event.get():
                 if event.type == pg.KEYDOWN:
@@ -96,14 +95,19 @@ class Taverns:
                         print(self.taverns[innValue][2])
                         print(self.taverns[innValue][3])
                         doneInn = True
+
             blank_box(1)
             text = font.render(self.taverns[innValue][0], True, RED, BLACK)
             screen.blit(text, (1020, 157))
             pg.display.update()
+
         blank_box(2)
         blank_box(3)
+
         configText = font.render("  City Editor", True, RED, BLACK)
         screen.blit(configText, (1020, 256))
+
         t0Text = font.render("Tavern Updated", True, RED, BLACK)
         screen.blit(t0Text, (1010, 310))
+
         pg.display.update()

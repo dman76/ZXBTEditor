@@ -14,6 +14,7 @@ class IronGates:
             4:  ["Iron Gate 4", "00", "00", "00", "00", "0", "U"]
         }
 
+
     def load_gates(self,cityGrid):
         ''' Apply gate data from saved file '''
 
@@ -21,6 +22,7 @@ class IronGates:
             print(gate)
             print(cityGrid[(gate+36)])
             self.irongates[gate] = cityGrid[gate+36]    # ??? what is magic number 36 ???
+
 
     def write(self):
         ''' Write output for z80 recompile '''
@@ -30,13 +32,12 @@ class IronGates:
                 txt = f'\tdb  {gate[1]}, {gate[2]}, {gate[5]}\t; {gate[0]} Coords + Direction\n'
                 outfile.write(txt)
 
+
     def writeGates(self):
         ''' Write output for application save/load '''
 
-        with open(DATADIR+'new_city.city', 'a') as cityOutFile:
-            for gate in self.irongates.values():
-                gate_data = ', '.join(gate)
-                cityOutFile.write(f'{gate_data}\n')
+        dump_data(DATADIR+'new_city.city', self.irongates)
+
 
     def configure(self, x):
         print(x)

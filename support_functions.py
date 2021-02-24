@@ -96,3 +96,12 @@ def diag(xcount, space_to_fill, space_left, add_count, last):
         outfile.write(f" SpaceLeft: {space_left}")
         outfile.write(f" AddCount: {add_count}")
         outfile.write(f" Last: {last}")
+
+
+def dump_data(filename, data):
+    with open(filename, 'a') as outfile:
+        outfile.write('\n')
+
+        for obj in data.values():
+            obj_data = ', '.join(obj)
+            outfile.write(f'{obj_data}\n')
