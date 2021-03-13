@@ -68,8 +68,8 @@ def pack_2():
                         packLeft = (212 - addCount)
                         cCount = (cCount - packLeft)
                         if packLeft > 30:           # strip 30 off and continue
-                            CityPacked.append("0FCh")
-                            CityPacked.append(" 1Eh")
+                            CityPacked.append("#FC")
+                            CityPacked.append("#1E")
                             CityPacked.append(last)
                             packLeft = (packLeft - 30)
                             spaceToFill = spaceToFill - 30
@@ -123,8 +123,8 @@ def pack_2():
                                 outfile.write('\n')
                                 outfile.write("---packed exactly---")
                         if cCount > 30:                     # strip 30 off and continue
-                            CityPacked.append("0FCh")
-                            CityPacked.append(" 1Eh")
+                            CityPacked.append("#FC")
+                            CityPacked.append("#1E")
                             CityPacked.append(last)
                             cCount = (cCount - 30)
                             spaceToFill = spaceToFill - 30
@@ -134,7 +134,7 @@ def pack_2():
                             print("*NP >30: Space Left = ", spaceLeft)
                             print("Space to fill with packing: ", spaceToFill)
                         if cCount > 3:
-                            CityPacked.append("0FCh")
+                            CityPacked.append("#FC")
                             CityPacked.append(str(dec2hexAll(cCount)))
                             CityPacked.append(last)
                             spaceToFill = spaceToFill - cCount
@@ -247,6 +247,7 @@ def write_Map(CityOut):
             else:
                 cityOutFile.write(str(CityOut[x])+',')
             lineCount = lineCount + 1
+        cityOutFile.write('\n')
     taverns.writeTavern()
     irongates.writeGates()
     statues.writeStatues()
@@ -311,19 +312,19 @@ def map_to_display(mS):
         "0": 0,
         "1": 1,
         "9": 2,
-        "19h" : 3,
-        "29h" : 4,
-        "11h" : 5,
-        "0A8h": 6,
-        "21h" : 7,
-        "89h" : 8,
-        "60h" : 9,
-        "68h" : 10,
-        "71h" : 11,
-        "99h" : 12,
-        "91h" : 13,
-        "0A1h": 14,
-        "78h" : 15
+        "#19" : 3,
+        "#29" : 4,
+        "#11" : 5,
+        "#A8": 6,
+        "#21" : 7,
+        "#89" : 8,
+        "#60" : 9,
+        "#68" : 10,
+        "#71" : 11,
+        "#99" : 12,
+        "#91" : 13,
+        "#A1": 14,
+        "#78" : 15
         }
     
     return SQUARES.get(mapSquare, 0)   
@@ -538,13 +539,13 @@ while not done:
                     print("City Map will not pack!")
             elif event.key == pg.K_c:
                 # configurable properties
-                if CityOut[Pointer] == " 11h":
+                if CityOut[Pointer] == "#11":
                     print('Tavern config')
                     taverns.configure(Pointer)
-                elif CityOut[Pointer] == " 60h":
+                elif CityOut[Pointer] == "#60":
                     print('Statue config')
                     statues.configure(Pointer)
-                elif CityOut[Pointer] == " 68h":
+                elif CityOut[Pointer] == "#68":
                     print('Iron Gate config')
                     irongates.configure(Pointer)
 

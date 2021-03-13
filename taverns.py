@@ -11,20 +11,20 @@ class Taverns:
         self.filename = filename
         self.taverns = {
             #Name , output value, N coord HEX, E coord Hex, N coord Dec, E coord Dec
-            1:  [" Scarlet Bard", "44h", "00", "00", "00", "00"],
-            2:  ["  Sinister Inn", "45h", "00", "00", "00", "00"],
-            3:  ["Dragon's Breath", "46h", "00", "00", "00", "00"],
-            4:  [" Ask Y'Mother", "47h", "00", "00", "00", "00"],
-            5:  [" Archmage Inn", "48h", "00", "00", "00", "00"],
-            6:  [" Skull Tavern", "49h", "00", "00", "00", "00"],
-            7:  [" Drawn Blade", "4Ah", "00", "00", "00", "00"]
+            1:  [" Scarlet Bard", "#44", "00", "00", "00", "00"],
+            2:  ["  Sinister Inn", "#45", "00", "00", "00", "00"],
+            3:  ["Dragon's Breath", "#46", "00", "00", "00", "00"],
+            4:  [" Ask Y'Mother", "#47", "00", "00", "00", "00"],
+            5:  [" Archmage Inn", "#48", "00", "00", "00", "00"],
+            6:  [" Skull Tavern", "#49", "00", "00", "00", "00"],
+            7:  [" Drawn Blade", "#4A", "00", "00", "00", "00"]
         }
 
     def load_taverns(self,cityGrid):
         ''' Apply tavern data from saved file '''
 
         for tavern in self.taverns:
-            self.taverns[tavern] = cityGrid[(tavern+29)]    # ??? what is magic number 29 ???
+            self.taverns[tavern] = cityGrid[(tavern+29)]    # Tavern data starts at line 30 in saved city file
 
 
     def write(self):
@@ -89,8 +89,8 @@ class Taverns:
                         #if innValue != 0:   # Don't update coords for default tavern!
                         self.taverns[innValue][2] = dec2hexAll(getNorth(x))
                         self.taverns[innValue][3] = dec2hexAll(getEast(x))
-                        self.taverns[innValue][4] = getNorth(x)
-                        self.taverns[innValue][5] = getEast(x)
+                        self.taverns[innValue][4] = str(getNorth(x))
+                        self.taverns[innValue][5] = str(getEast(x))
                         print(self.taverns[innValue][0])
                         print(self.taverns[innValue][2])
                         print(self.taverns[innValue][3])

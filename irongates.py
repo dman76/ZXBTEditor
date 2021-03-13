@@ -21,7 +21,7 @@ class IronGates:
         for gate in self.irongates:
             print(gate)
             print(cityGrid[(gate+36)])
-            self.irongates[gate] = cityGrid[gate+36]    # ??? what is magic number 36 ???
+            self.irongates[gate] = cityGrid[gate+36]    # Gate data starts at line 37 in saved city file
 
 
     def write(self):
@@ -98,8 +98,8 @@ class IronGates:
                             self.irongates[gateValue][0],
                             dec2hexAll(getNorth(x)),
                             dec2hexAll(getEast(x)),
-                            getNorth(x),
-                            getEast(x),
+                            str(getNorth(x)),
+                            str(getEast(x)),
                             DIRECTIONS_PARAM[direction],
                             DIRECTIONS[direction]
                         ]

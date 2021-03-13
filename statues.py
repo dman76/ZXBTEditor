@@ -31,7 +31,7 @@ class Statues:
         ''' Apply statue data from saved file '''
 
         for statue in self.statues:
-            self.statues[statue] = cityGrid[(statue+40)]    # ??? what is magic number 40 ???
+            self.statues[statue] = cityGrid[(statue+40)]    # Guardian Statue data starts at line 41 in saved city file
 
 
     def write(self):
@@ -142,12 +142,12 @@ class Statues:
                         self.statues[statueValue] = [
                             self.statues[statueValue][0],
                             MONSTERS[monsterValue][1],
-                            monsterValue,
+                            str(monsterValue),
                             dec2hexAll(getNorth(x)),
                             dec2hexAll(getEast(x)),
-                            getNorth(x),
-                            getEast(x),
-                            direction,
+                            str(getNorth(x)),
+                            str(getEast(x)),
+                            str(direction),
                             DIRECTIONS[direction]
                         ]
 
