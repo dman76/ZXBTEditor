@@ -348,6 +348,8 @@ city = strip_from_sheet(sheet, (0, 0), (32, 32), 3, 6)
 sheetBig = pg.image.load(CURRDIR + '/CitySpriteSheet128.png')
 cityBig = strip_from_sheet(sheetBig, (0, 0), (128, 128), 3, 6)
 
+cursor = pg.image.load(CURRDIR + '/Cursor.jpg')
+cursor.set_alpha(150)
 
 selectX = 1015
 selectY = 5
@@ -470,6 +472,7 @@ while not done:
         blank_box(1)
         screen.blit(text, (1020, 156))
         screen.blit(city[selectedBlock], (XPos, YPos))
+        screen.blit(cursor, (XPos, YPos))
         screen.blit(textX, (1060, 200))
         screen.blit(textY, (1060, 220))
 
