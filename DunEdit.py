@@ -16,13 +16,6 @@ from PIL import Image
 CURRDIR = sys.path[0]
 DATADIR = CURRDIR + '\\data\\'
  
-# These constants define our platform types:
-#   Name of file
-#   X location of sprite
-#   Y location of sprite
-#   Width of sprite
-#   Height of sprite
-
 
 def strip_from_sheet(src_sheet, start, size, columns, rows):
     frames = []
@@ -68,6 +61,7 @@ def saved_grid_to_list():
     savedDungeonData = []
 
     DUNGEONS = {
+        "e": 'blank.dun',
         0: 'blank.dun',
         1: 'walledDungeon.dun',
         2: 'WineCellar.dun',
@@ -164,10 +158,10 @@ text = font.render('     Blank     ', True, CYAN, BLACK)
 textX = font.render('E: '+str(east), True, CYAN, BLACK)
 textY = font.render('N: 21', True, CYAN, BLACK)
 
-textN = font.render('N: ', True, CYAN, BLACK)
-textS = font.render('S: ', True, CYAN, BLACK)
-textE = font.render('E: ', True, CYAN, BLACK)
-textW = font.render('W: ', True, CYAN, BLACK)
+#textN = font.render('N: ', True, CYAN, BLACK)
+#textS = font.render('S: ', True, CYAN, BLACK)
+#textE = font.render('E: ', True, CYAN, BLACK)
+#textW = font.render('W: ', True, CYAN, BLACK)
 locationText = font.render('', True, CYAN, BLACK)
 
 blockText = create_grid(20)
@@ -177,67 +171,64 @@ blockTextMax = 0
 # initial menu
 #-------- Select Start Grid -------------
 
-gridSelectText = font.render("Select Grid Type:", True, CYAN, BLACK)
-gridBlankText = font.render("0) Empty Grid", True, CYAN, BLACK)
-gridWalledText = font.render("1) Walled Dungeon", True, CYAN, BLACK)
-gridCellarText = font.render("2) Wine Cellar", True, CYAN, BLACK)
-gridSewer1Text = font.render("3) Sewer Level 1", True, CYAN, BLACK)
-gridSewer2Text = font.render("4) Sewer Level 2", True, CYAN, BLACK)
-gridSewer3Text = font.render("5) Sewer Level 3", True, CYAN, BLACK)
-gridCat1Text = font.render("6) Catacombs Level 1", True, CYAN, BLACK)
-gridCat2Text = font.render("7) Catacombs Level 2", True, CYAN, BLACK)
-gridCat3Text = font.render("8) Catacombs Level 3", True, CYAN, BLACK)
-gridCastle1Text = font.render("9) Castle Level 1", True, CYAN, BLACK)
-gridCastle2Text = font.render("q) Castle Level 2", True, CYAN, BLACK)
-gridCastle3Text = font.render("w) Castle Level 3", True, CYAN, BLACK)
-gridKylearansText = font.render("e) Kylearans Tower", True, CYAN, BLACK)
-gridMangars1Text = font.render("r) Mangars Tower Level 1", True, CYAN, BLACK)
-gridMangars2Text = font.render("t) Mangars Tower Level 2", True, CYAN, BLACK)
-gridMangars3Text = font.render("y) Mangars Tower Level 3", True, CYAN, BLACK)
-gridMangars4Text = font.render("u) Mangars Tower Level 4", True, CYAN, BLACK)
-gridMangars5Text = font.render("i) Mangars Tower Level 5", True, CYAN, BLACK)
+MENU_TEXT = {
+    
+0: ["Select Grid Type:"],
+1: ["e) Empty Grid"],
+2: ["1) Walled Dungeon"],
+3: ["2) Wine Cellar"],
+4: ["3) Sewer Level 1"],
+5: ["4) Sewer Level 2"],
+6: ["5) Sewer Level 3"],
+7: ["6) Catacombs Level 1"],
+8: ["7) Catacombs Level 2"],
+9:["8) Catacombs Level 3"],
+10:["9) Castle Level 1"], 
+11:["q) Castle Level 2"], 
+12:["w) Castle Level 3"], 
+13:["k) Kylearans Tower"], 
+14:["r) Mangars Tower Level 1"], 
+15:["t) Mangars Tower Level 2"],
+16:["y) Mangars Tower Level 3"], 
+17:["u) Mangars Tower Level 4"],
+18:["i) Mangars Tower Level 5"]
+}
 
-screen.blit(gridSelectText, (300,10))
-screen.blit(gridBlankText, (320,100))
-screen.blit(gridWalledText, (320,120))
-screen.blit(gridCellarText, (320,140))
-screen.blit(gridSewer1Text, (320,160))
-screen.blit(gridSewer2Text, (320,180))
-screen.blit(gridSewer3Text, (320,200))
-screen.blit(gridCat1Text, (320,220))
-screen.blit(gridCat2Text, (320,240))
-screen.blit(gridCat3Text, (320,260))
-screen.blit(gridCastle1Text, (320,280))
-screen.blit(gridCastle2Text, (320,300))
-screen.blit(gridCastle3Text, (320,320))
-screen.blit(gridKylearansText, (320,340))
-screen.blit(gridMangars1Text, (320,360))
-screen.blit(gridMangars2Text, (320,380))
-screen.blit(gridMangars3Text, (320,400))
-screen.blit(gridMangars4Text, (320,420))
-screen.blit(gridMangars5Text, (320,440))
+t = font.render(MENU_TEXT[0][0], True, CYAN, BLACK)
+screen.blit(t, (300,10))
+
+for txt in range (1, 19):
+    t = font.render(MENU_TEXT[txt][0], True, CYAN, BLACK)
+    screen.blit(t, (320,(txt*20)+100))
 
 
 pg.display.update()
 
-doneSelect = False
-sel = 0
 
-while not doneSelect:
+sel = None
+
+while not sel:
+
+    SELECTKEYS = {
+            pg.K_0: 0,
+            pg.K_1: 1,
+            pg.K_2: 2,
+            pg.K_3: 3,
+            pg.K_4: 4,
+            pg.K_5: 5,
+            pg.K_6: 6,
+            pg.K_7: 7,
+            pg.K_8: 8,
+            pg.K_9: 9,
+            pg.K_e: "e",
+    }
+
+    
     for event in pg.event.get():
         if event.type == pg.KEYDOWN:
-            if event.key == pg.K_0:
-                sel = 0
-                doneSelect = True
-            if event.key == pg.K_1:
-                sel = 1
-                doneSelect = True
-            if event.key == pg.K_2:
-                sel = 2
-                doneSelect = True
-            if event.key == pg.K_3:
-                sel = 3
-                doneSelect = True
+
+            sel = SELECTKEYS.get(event.key)
+            
 
 pg.display.update()
 
@@ -271,20 +262,24 @@ specialArray = create_grid_ff(16)
 #[2]= max count for number limited events (99 = unlimited)
 #[3]= group
 #[4]= next bit multiplier for table loop
+#[5]= walls x off set for adjoining wall loc in array
+#[6]= walls y off set for adjoining wall loc in array
+#[7]= adjoining wall Bit ID
+#[8]= adjoining wall BIT value
 
 BIT = {
-        1: [0, 0, 99, 0, 1],     #Nbit
-        2: [0, 0, 99, 0, 1],     #Nbit
-        3: [0, 0, 99, 0, 1],     #Nbit
-        4: [0, 0, 99, 0, 4],     #Sbit 
-        5: [0, 0, 99, 0, 4],     #Sbit
-        6: [0, 0, 99, 0, 4],     #Sbit
-        7: [0, 0, 99, 0, 16],     #Ebit 
-        8: [0, 0, 99, 0, 16],     #Ebit
-        9: [0, 0, 99, 0, 16],     #Ebit
-       10: [0, 0, 99, 0, 64],     #Wbit 
-       11: [0, 0, 99, 0, 64],     #Wbit
-       12: [0, 0, 99, 0, 64],     #Wbit
+        1: [0, 0, 99, 0, 1, 0, -22, 4, 4],     #Nbit
+        2: [0, 0, 99, 0, 1, 0, -22, 5, 4],     #Nbit
+        3: [0, 0, 99, 0, 1, 0, -22, 6, 4],     #Nbit
+        4: [0, 0, 99, 0, 4, 0, 22, 1, 1],     #Sbit 
+        5: [0, 0, 99, 0, 4, 0, 22, 2, 1],     #Sbit
+        6: [0, 0, 99, 0, 4, 0, 22, 3, 1],     #Sbit
+        7: [0, 0, 99, 0, 16,1, 0, 10, 64],     #Ebit 
+        8: [0, 0, 99, 0, 16,1, 0, 11, 64],     #Ebit
+        9: [0, 0, 99, 0, 16,1, 0, 12, 64],     #Ebit
+       10: [0, 0, 99, 0, 64, -1, 0, 7, 16],     #Wbit 
+       11: [0, 0, 99, 0, 64, -1, 0, 8, 16],     #Wbit
+       12: [0, 0, 99, 0, 64, -1, 0, 9, 16],     #Wbit
        13: [0, 0, 99, 1, 1],   #StairsUBit
        14: [0, 0, 99, 1, 2],   #stairsDBit
        15: [0, 0, 99, 3, 8],   #darkBit
@@ -466,6 +461,19 @@ while not done:
                                 walls -= BIT[wallPlace][0]
                                 walls += (LU[selectedBlock][1])
                                 DungeonOut[Pointer] = str(walls)
+                            adjWalls = BIT[wallPlace][7]
+                            adjLoc = DungeonOut[Pointer+BIT[wallPlace][5]+BIT[wallPlace][6]]
+                            # Loop and set bits for adjacent walls
+                            for bitSet in range(1,13):
+                                BIT[bitSet][1] = getBit(adjWalls,BIT[bitSet][8],(BIT[bitSet][8]*2))
+                                if BIT[bitSet][1] == 0:
+                                    adjWalls += adjWalls
+                                elif BIT[bitSet][1] != BIT[wallPlace][7]:
+                                    adjWalls += adjWalls
+                                #elif BIT[bitSet][1] != adjWalls:
+                                #    adjWalls = 0
+                                #    adjWalls
+                            DungeonOut[int(adjLoc)] = adjWalls
 
                     for sb in range (13, 31):
                         if selectedBlock == sb:
